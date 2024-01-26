@@ -1,24 +1,104 @@
-import logo from './logo.svg';
-import './App.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import React, { Suspense, useEffect, useState } from "react";
+import { HashRouter, Route, Routes } from "react-router-dom";
+import "animate.css";
+import Swiper from "swiper";
+// import Swiper styles
+import "swiper/css";
+import TokenService from "./services/token.service";
+import { UserService } from "./services/user.service";
+
+const HomePage = React.lazy(() => import("./views/HomePage"));
+const UserProfile = React.lazy(() => import("./views/UserProfile"));
+const UserDashboard = React.lazy(() => import("./views/UserDashboard"));
+const UserPhotoGallery = React.lazy(() => import("./views/UserPhotoGallery"));
+const NewMatches = React.lazy(() => import("./views/NewMatches"));
+
+const loading = (
+  <div className="pt-3 text-center">
+    <div className="sk-spinner sk-spinner-pulse"></div>
+  </div>
+);
 
 function App() {
+  const [userLogin, setUserLogin] = useState(true)
+
+  useEffect(() => {
+    const user = TokenService.getUser()
+
+    if (user?.jwt) {
+      setUserLogin(true)
+    } else {
+      logOut()
+    }
+  }, [])
+
+  const logOut = () => {
+    UserService.logout()
+    setUserLogin(false)
+    // change status
+  }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter>
+      <Suspense fallback={loading}>
+        <Routes>
+          {/* <Route exact path="/login" name="Login Page" element={<Login />} /> */}
+          {/* <Route
+          exact
+          path="/register"
+          name="Register Page"
+          element={userLogin ? <Register /> : <Login />}
+        />
+        <Route
+          exact
+          path="/#/organizers"
+          name="Login Page"
+          element={userLogin ? <OrganizersPage /> : <Login />}
+        />
+        <Route
+          exact
+          path="/#/voters"
+          name="Login Page"
+          element={userLogin ? <VotersPage /> : <Login />}
+        />
+        <Route
+          exact
+          path="/#/reports"
+          name="Reports Page"
+          element={userLogin ? <ReportsPage /> : <Login />}
+        /> */}
+          {/* <Route exact path="/404" name="Page 404" element={<Page404 />} />
+        <Route exact path="/500" name="Page 500" element={<Page500 />} /> */}
+          <Route
+            exact
+            path="/user/photos"
+            name="User Gallery Page"
+            element={userLogin ?  <UserPhotoGallery /> : <HomePage />}
+          />
+          <Route
+            exact
+            path="/user/myprofile"
+            name="User Profile Page"
+            element={userLogin ? <UserProfile />: <HomePage />}
+          />
+          <Route
+            exact
+            path="/user/dashboard"
+            name="User Dashboard Page"
+            element={userLogin ? <UserDashboard />: <HomePage />}
+          />
+          <Route
+            exact
+            path="/user/newmatches"
+            name="User New Matches Page"
+            element={userLogin ? <NewMatches />: <HomePage />}
+          />
+          <Route path="/" name="Home" element={<HomePage />} />
+        </Routes>
+      </Suspense>
+    </HashRouter>
   );
 }
 

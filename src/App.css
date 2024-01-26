@@ -1,3 +1,74 @@
+:root {
+  --primary: #E776B6;
+  --mid-light: #E5A0D4;
+  --light: #F4C0DD;
+  --mid-dark: #8F4A7E;
+  --dark: #4D273C;
+  --navbar: #22242A;
+  --body-color: #F1F1F2;
+  --text-gray: #ADB4CB
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+#app { height: 100% }
+html,
+body {
+  position: relative;
+  height: 100%;
+}
+
+.primary-btn {
+  background-color: var(--primary);
+  border: none
+}
+
+.primary-btn:hover {
+  border: solid 1px var(--primary);
+  background-color: white;
+  color: var(--primary);
+}
+
+
+.sign-up-btn {
+  border: solid 2px var(--primary);
+  color: var(--primary);
+}
+
+.sign-up-btn:hover {
+  color: white;
+  background-color: var(--primary);
+}
+
+.lets-begin-btn {
+  border: solid 2px var(--mid-light);
+  background-color: var(--mid-light);
+}
+
+.lets-begin-btn:hover {
+  border: solid 2px var(--mid-light);
+  background-color: white;
+  color: var(--mid-light);
+}
+
+body {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.background-body {
+  background-color: var(--body-color);
+}
+
+.text-gray {
+  color: var(--text-gray);
+}
+
 .App {
   text-align: center;
 }
@@ -11,6 +82,17 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+.container-centered {
+  position: relative;
+}
+
+.centered-element {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .App-header {
@@ -35,4 +117,85 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.input-profile {
+  display: none;
+}
+
+.input-profile-label {
+  padding: 100;
+  height: 300;
+  width: 500;
+  border-radius: 6px;
+  border: 1px dashed #999;
+}
+
+.input-profile-label:hover {
+  color: #de0611;
+  border: 1px dashed #de0611;
+}
+
+.swiper {
+  width: 100%;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 300px;
+  height: 300px;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+}
+
+.formbold-main-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding-inline: 20px;
+}
+
+
+.formbold-steps ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  gap: 40px;
+}
+.formbold-steps li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #536387;
+}
+.formbold-steps li span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #DDE3EC;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #536387;
+}
+.formbold-steps li.active {
+  color: #07074D;;
+}
+.formbold-steps li.active span {
+  background: var(--primary);
+  color: #FFFFFF;
 }
