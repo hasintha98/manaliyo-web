@@ -199,3 +199,17 @@ body {
   background: var(--primary);
   color: #FFFFFF;
 }
+
+.filter-btn {
+  display: none;
+}
+
+@media only screen and (max-width: 600px) {
+  .filter-section {
+    display: none;
+  }
+
+  .filter-btn {
+    display:block;
+  }
+}

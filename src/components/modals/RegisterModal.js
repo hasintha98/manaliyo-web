@@ -2,6 +2,7 @@ import { cilArrowLeft, cilBackspace } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import {
   CButton,
+  CButtonGroup,
   CCol,
   CForm,
   CFormCheck,
@@ -130,15 +131,20 @@ function RegisterModal({ visible, setVisible, switchModals }) {
           {formType == "first" && (
             <div>
               <div className="animate__animated animate__zoomIn">
-                <h4 style={{ textAlign: "left" }}>This Profile is for ...</h4>
+              <p>
+              Share your passions, shape your story! Tell us about your interests to find connections that resonate with your heart. Let's create a profile that reflects the unique tapestry of you.
+                </p>
 
+                <h4 style={{ textAlign: "left" }}>This Profile is for ...</h4>
+              
                 <CRow className="mt-4" style={{ display: "flex", gap: 10 }}>
                   <CCol>
                     <CFormCheck
                       button={{
                         shape: "rounded-pill",
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
+                        className: 'primary-btn '
                       }}
                       type="radio"
                       name="options-outlined"
@@ -151,7 +157,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   <CCol>
                     <CFormCheck
                       button={{
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
                         shape: "rounded-pill",
                       }}
@@ -165,7 +171,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   <CCol>
                     <CFormCheck
                       button={{
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
                         shape: "rounded-pill",
                       }}
@@ -179,7 +185,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   <CCol>
                     <CFormCheck
                       button={{
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
                         shape: "rounded-pill",
                       }}
@@ -193,7 +199,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   <CCol>
                     <CFormCheck
                       button={{
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
                         shape: "rounded-pill",
                       }}
@@ -207,7 +213,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   <CCol>
                     <CFormCheck
                       button={{
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
                         shape: "rounded-pill",
                       }}
@@ -221,7 +227,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   <CCol>
                     <CFormCheck
                       button={{
-                        color: "primary",
+                        color: "dark",
                         variant: "outline",
                         shape: "rounded-pill",
                       }}
@@ -240,7 +246,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
                   <CFormCheck
                     button={{
-                      color: "primary",
+                      color: "dark",
                       variant: "outline",
                       shape: "rounded-pill",
                     }}
@@ -254,7 +260,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
 
                   <CFormCheck
                     button={{
-                      color: "primary",
+                      color: "dark",
                       variant: "outline",
                       shape: "rounded-pill",
                     }}
@@ -281,6 +287,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
           {formType == "second" && (
             <div>
               <div className="animate__animated animate__zoomIn">
+                <p>Share your basics and let's kickstart your journey to love. </p>
                 <h4 style={{ textAlign: "left" }}>Your Name</h4>
 
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
@@ -290,6 +297,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     id="success-myself"
                     autoComplete="off"
                     placeholder="First Name"
+                    floatingLabel="First Name"
                     defaultChecked
                   />
                   <CFormInput
@@ -298,6 +306,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     id="success-myself"
                     autoComplete="off"
                     placeholder="Last Name"
+                    floatingLabel="Last Name"
                     defaultChecked
                   />
                 </div>
@@ -312,6 +321,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     id="success-myself"
                     autoComplete="off"
                     placeholder="DD"
+                    floatingLabel="DD"
                     style={{ width: "100px" }}
                     defaultChecked
                   />
@@ -322,6 +332,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     id="success-myself"
                     autoComplete="off"
                     placeholder="MM"
+                    floatingLabel="MM"
                     style={{ width: "100px" }}
                     defaultChecked
                   />
@@ -331,6 +342,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     id="success-myself"
                     autoComplete="off"
                     placeholder="YYYY"
+                    floatingLabel="YYYY"
                     style={{ width: "100px" }}
                     defaultChecked
                   />
