@@ -10,6 +10,15 @@ export const UserService = {
       throw error;
     }
   },
+  registerBasicInformation: async (data) => {
+    const body = {data}
+    try {
+      const response = await axiosInstance.post("/basicinformationsr", body);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
   updateUser: async (id, data) => {
     try {
       const response = await axiosInstance.patch("/auth/local/register" + id, data);

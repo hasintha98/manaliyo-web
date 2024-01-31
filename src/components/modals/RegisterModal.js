@@ -42,9 +42,10 @@ function RegisterModal({ visible, setVisible, switchModals }) {
     }
 
     setLoading(true);
-    UserService.registerUser({ email, password })
+    UserService.registerUser({ email, password, username: email })
       .then((res) => {
         console.log(res);
+        
       })
       .catch((err) => {
         setErrorMessage(MODAL_MSGES.LOGIN_INVALID);

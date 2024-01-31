@@ -12,7 +12,7 @@ import {
   CRow,
 } from "@coreui/react";
 import React from "react";
-import BG from "../assets/5.jpg";
+import BG from "../assets/c1.jpg";
 import { HOMEPAGE } from "../common/typography";
 import { COLORS } from "../common/colors";
 
