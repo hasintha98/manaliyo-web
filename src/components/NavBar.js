@@ -111,7 +111,7 @@ const NavBar = () => {
                       </CDropdownItem>
                       <CDropdownItem href="#">Settings</CDropdownItem>
                       <CDropdownDivider />
-                      <CDropdownItem href="#">Sign Out</CDropdownItem>
+                      <CDropdownItem onClick={logOut}>Sign Out</CDropdownItem>
                     </CDropdownMenu>
                   </CDropdown>
                 </div>
