@@ -1,27 +1,90 @@
+import axios from "axios";
 import { axiosInstance } from "../common/AxiosInstance";
+import { MAIN_API } from "../common/const";
 import TokenService from "./token.service";
+import { filterQueryMaker } from "../common/common";
 
 export const UserService = {
   registerUser: async (data) => {
     try {
       const response = await axiosInstance.post("/auth/local/register", data);
+      if (response?.data.jwt) {
+        // response.data['level'] = 1
+
+        TokenService.setUser({
+          ...response?.data,
+        });
+      }
       return response.data;
     } catch (error) {
       throw error;
     }
   },
-  registerBasicInformation: async (data) => {
-    const body = {data}
+  registerBasicInformation: async (data, jwtToken) => {
+    const body = { data };
     try {
-      const response = await axiosInstance.post("/basicinformationsr", body);
+      const headers = {
+        "Content-Type": "application/json",
+        // No need to include Authorization header here
+        // Add any other custom headers you need here
+      };
+
+      if (jwtToken) {
+        headers["Authorization"] = `Bearer ${jwtToken}`;
+      }
+
+      const response = await axios.post(`${MAIN_API}/basicinformations`, body, {
+        headers,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  registerContactInformation: async (data, jwtToken) => {
+    const body = { data };
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        // No need to include Authorization header here
+        // Add any other custom headers you need here
+      };
+
+      if (jwtToken) {
+        headers["Authorization"] = `Bearer ${jwtToken}`;
+      }
+
+      const response = await axios.post(
+        `${MAIN_API}/contactinformations`,
+        body,
+        { headers }
+      );
       return response.data;
     } catch (error) {
       throw error;
     }
   },
   updateUser: async (id, data) => {
+    const body = { data };
     try {
-      const response = await axiosInstance.patch("/auth/local/register" + id, data);
+      const response = await axiosInstance.put(
+        "/auth/local/register/" + id,
+        body
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateUserInfoBySection: async (id, data, sectionType) => {
+    console.log(data);
+    const body = { data };
+    try {
+      const response = await axiosInstance[id ? "put" : "post"](
+        `/${sectionType}/` + `${id ? id : ""}`,
+        body
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -36,10 +99,38 @@ export const UserService = {
       throw error;
     }
   },
+  getUsersWithFilters: async (filters) => {
+    const query = filterQueryMaker(filters);
+    try {
+      const response = await axiosInstance.get(`/users?populate=*${query}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   getUser: async (id) => {
     try {
       const response = await axiosInstance.get("/users/" + id);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getUserCurrentUser: async () => {
+    try {
+      const id = TokenService.getUser()?.user?.id;
+      console.log(id);
+      const response = await axiosInstance.get(`/users/${id}?populate=*`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getUserById: async (id) => {
+    try {
+      const response = await axiosInstance.get(`/users/${id}?populate=*`);
       return response.data;
     } catch (error) {
       throw error;
@@ -58,9 +149,9 @@ export const UserService = {
       });
       if (response.data.jwt) {
         // response.data['level'] = 1
- 
+
         TokenService.setUser({
-          ...response.data
+          ...response.data,
         });
       }
       return response.data;
@@ -73,7 +164,58 @@ export const UserService = {
     TokenService.removeUser();
   },
 
-  getCurrentUser: () => {
-    TokenService.getUser();
+  getCurrentUserAPI: async () => {
+    const id = TokenService.getUser()?.user.id;
+    if (!id) {
+      return null; // Or handle appropriately
+    }
+
+    try {
+      // Make concurrent requests for basic and contact data
+      const [userData, basicData, contactData] = await Promise.all([
+        axiosInstance.get(`/users/${id}`),
+        axiosInstance.get(`/basicinformations?filters[userId][$eq]=${id}`),
+        axiosInstance.get(`/contactinformations?filters[userId][$eq]=${id}`),
+      ]);
+
+      // Destructure data from responses
+      const { data: userInfoData } = userData.data;
+      const { data: basicInfoData } = basicData.data;
+      const { data: contactInfoData } = contactData.data;
+
+      // Extract attributes
+
+      const basicDataAttributes =
+        basicInfoData.length > 0
+          ? { ...basicInfoData[0].attributes, id: basicInfoData[0].id }
+          : {};
+      const contactDataAttributes =
+        contactInfoData.length > 0
+          ? { ...contactInfoData[0].attributes, id: contactInfoData[0].id }
+          : {};
+
+      // Return combined data
+      return {
+        userData: userInfoData,
+        basicData: basicDataAttributes,
+        contactData: contactDataAttributes,
+      };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  uploadUserImage: async (userId, file) => {
+
+    const formData = new FormData();
+    formData.append("files.image1", file);
+    formData.append("data", JSON.stringify({ user_Id: userId }));
+
+    try {
+      const response = await axiosInstance.post("/user-images", formData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   },
 };

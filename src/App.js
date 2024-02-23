@@ -11,6 +11,7 @@ import { UserService } from "./services/user.service";
 
 const HomePage = React.lazy(() => import("./views/HomePage"));
 const UserProfile = React.lazy(() => import("./views/UserProfile"));
+const Profile = React.lazy(() => import("./views/Profile"));
 const UserDashboard = React.lazy(() => import("./views/UserDashboard"));
 const UserPhotoGallery = React.lazy(() => import("./views/UserPhotoGallery"));
 const NewMatches = React.lazy(() => import("./views/NewMatches"));
@@ -82,6 +83,12 @@ function App() {
             path="/user/myprofile"
             name="User Profile Page"
             element={userLogin ? <UserProfile />: <HomePage />}
+          />
+          <Route
+            exact
+            path="/user/profile/:ref"
+            name="Profile Page"
+            element={userLogin ? <Profile />: <HomePage />}
           />
           <Route
             exact

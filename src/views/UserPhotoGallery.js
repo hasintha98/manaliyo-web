@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import {
   CBadge,
+  CButton,
   CCard,
   CCol,
   CContainer,
@@ -25,6 +26,8 @@ import { COLORS } from "../common/colors";
 import "../scss/uploader.css";
 
 import IMAGE from "../assets/2.jpg";
+import { UserService } from "../services/user.service";
+import TokenService from "../services/token.service";
 
 function UserPhotoGallery() {
   const [userDetails, setUserDetails] = useState({
@@ -68,39 +71,96 @@ function UserPhotoGallery() {
     stateOfResidence: "",
     zipCode: "",
   });
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const userId = TokenService.getUser()?.user?.id;
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedFile(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadPhoto = async (event) => {
+    event.preventDefault();
+
+    if (!selectedFile) {
+      alert("Please select a file");
+      return;
+    }
+    UserService.uploadUserImage(userId, selectedFile)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  console.log(selectedFile);
   return (
     <div className="background-body">
       <NavBar />
       <UserNavBar />
       <CContainer className="mb-5">
         <CCard className="mt-2 mb-5 p-4">
-          <CRow className="mt-3 animate__animated animate__bounceIn" >
-            <CForm id="file-upload-form" class="uploader">
+          <CRow className="mt-3 animate__animated animate__bounceIn">
+            <CForm
+              id="file-upload-form"
+              onSubmit={uploadPhoto}
+              class="uploader"
+            >
               <CFormInput
                 id="file-upload"
                 type="file"
                 name="fileUpload"
                 accept="image/*"
+                onChange={handleFileChange}
               />
 
               <label for="file-upload" id="file-drag">
-                <CImage id="file-image" src="#" alt="Preview" class="hidden" />
-                <div id="start">
-                  <i class="fa fa-download" aria-hidden="true"></i>
-                  <span>Upload Photos From Your Device</span>
-                  <div>
-                    Note: You can upload 20 photos to your profile. Each photos
-                    must be less than 15 MB and in jpg, jpeg, png or webp
-                    format. All photos uploaded are screened as per Photo
-                    Guidelines and 98% of those get activated within 2 hours.
+                {selectedFile && (
+                  <CImage
+                    id="file-image"
+                    src={selectedFile}
+                    alt="Preview"
+                    className="img-fluid"
+                  />
+                )}
+
+                {!selectedFile && (
+                  <div id="start">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                    <span>Upload Photos From Your Device</span>
+                    <div>
+                      Note: You can upload 20 photos to your profile. Each
+                      photos must be less than 15 MB and in jpg, jpeg, png or
+                      webp format. All photos uploaded are screened as per Photo
+                      Guidelines and 98% of those get activated within 2 hours.
+                    </div>
+                    <div id="notimage" class="hidden">
+                      Please select an image
+                    </div>
+                    <span id="file-upload-btn" class="btn btn-primary">
+                      Select a file
+                    </span>
                   </div>
-                  <div id="notimage" class="hidden">
-                    Please select an image
+                )}
+                {selectedFile && (
+                  <div id="start">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+
+                    <div>Photo is Selected</div>
+                    <CButton className="danger">Remove Photo</CButton>
+                    <CButton class="btn btn-primary" type="submit">
+                      Upload Now
+                    </CButton>
                   </div>
-                  <span id="file-upload-btn" class="btn btn-primary">
-                    Select a file
-                  </span>
-                </div>
+                )}
+
                 <div id="response" class="hidden">
                   <div id="messages"></div>
                   <progress class="progress" id="file-progress" value="0">
@@ -111,8 +171,8 @@ function UserPhotoGallery() {
             </CForm>
           </CRow>
 
-          <CRow >
-            <div className="animate__animated animate__zoomInLeft responsive mt-3" >
+          <CRow>
+            <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
                 <a target="_blank" href="img_5terre.jpg">
                   <CImage src={IMAGE} alt="Cinque Terre" height={50} />
@@ -126,7 +186,7 @@ function UserPhotoGallery() {
                 </a>
               </div>
             </div>
-          
+
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
                 <a target="_blank" href="img_5terre.jpg">
@@ -134,7 +194,7 @@ function UserPhotoGallery() {
                 </a>
               </div>
             </div>
-          
+
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
                 <a target="_blank" href="img_5terre.jpg">
@@ -142,7 +202,7 @@ function UserPhotoGallery() {
                 </a>
               </div>
             </div>
-          
+
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
                 <a target="_blank" href="img_5terre.jpg">
@@ -150,7 +210,7 @@ function UserPhotoGallery() {
                 </a>
               </div>
             </div>
-          
+
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
                 <a target="_blank" href="img_5terre.jpg">
@@ -158,8 +218,6 @@ function UserPhotoGallery() {
                 </a>
               </div>
             </div>
-          
-          
           </CRow>
         </CCard>
       </CContainer>

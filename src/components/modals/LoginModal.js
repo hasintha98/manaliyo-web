@@ -17,6 +17,7 @@ import { COLORS } from "../../common/colors";
 import LOGOICON from "../../assets/test-logo-r.png";
 import { UserService } from "../../services/user.service";
 import { MODAL_MSGES } from "../../common/typography";
+import LoadingFullscreen from "../LoadingFullscreen";
 
 function LoginModal({ visible, setVisible, switchModals }) {
   const [email, setEmail] = useState("");
@@ -48,6 +49,7 @@ function LoginModal({ visible, setVisible, switchModals }) {
         onClose={() => setVisible(false)}
       >
         <CModalBody>
+        <LoadingFullscreen loading={loading} />
           <div
             style={{
               display: "flex",

@@ -7,6 +7,6 @@ export const COLORS = {
     MID_DARK: '#8F4A7E',
     DARK: '#4D273C',
     NAVBAR: 'white',
-    RED_BTN: '',
+    RED_BTN: '#C40202',
     SUCCESS_BTN: ''
 }

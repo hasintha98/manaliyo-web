@@ -36,6 +36,7 @@ import image5 from "../assets/7.jpg";
 import { useInView } from "react-intersection-observer";
 
 import "../App.css";
+import LoadingFullscreen from "../components/LoadingFullscreen";
 
 const iconStyle = {
   backgroundColor: COLORS.FULL_LIGHT,

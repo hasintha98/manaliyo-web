@@ -9,6 +9,7 @@ import {
   CFormInput,
   CFormLabel,
   CFormText,
+  CImage,
   CLink,
   CModal,
   CModalBody,
@@ -21,38 +22,214 @@ import React, { useState } from "react";
 import { COLORS } from "../../common/colors";
 import { UserService } from "../../services/user.service";
 import { MODAL_MSGES } from "../../common/typography";
+import LoadingFullscreen from "../LoadingFullscreen";
+import LOGOICON from "../../assets/test-logo-r.png";
+import {
+  calculateAgeFromBday,
+  extractUsernameFromEmail,
+  getNullOrUndefinedAttributes,
+  randomNumberGen,
+} from "../../common/common";
+import TokenService from "../../services/token.service";
+import ErrorModal from "./ErrorModal";
+import { genders } from "../../common/const";
 
 function RegisterModal({ visible, setVisible, switchModals }) {
   const [formType, setFormType] = useState("first");
 
+  const [profileType, setProfileType] = useState("myself");
+  const [gender, setGender] = useState("male");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState([]);
+
+  const [mobileNo, setMobileNo] = useState("");
+  const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
   const [email, setEmail] = useState("");
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("Loading...");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [alertMessage, setAlertMessage] = useState(
+    "Please Fill All Required Fields"
+  );
+  const [locationAlertMessage, setLocationAlertMessage] = useState(
+    "Something Wrong With Location Server"
+  );
+  const [isAlert, setIsAlert] = useState(false);
+  const [successMsg, setSuccessMsg] = useState(false);
 
   const backButtonHandle = () => {
     if (formType == "second") setFormType("first");
     else if (formType == "third") setFormType("second");
   };
 
-  const registerUser = () => {
-    if (!email || !password) {
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    setPassword(newPassword);
+    setIsValid(passwordRegex.test(newPassword));
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const newPhoneNumber = e.target.value;
+    const phoneRegex = /^(?:\+?94|0)?(?:7\d{8})$/;
+
+    setMobileNo(newPhoneNumber);
+    setIsValidPhoneNumber(phoneRegex.test(newPhoneNumber));
+  };
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    setEmail(newEmail);
+    setIsValidEmail(emailRegex.test(newEmail));
+  };
+
+  const registerUser = async () => {
+    setIsAlert(false);
+    setLoading(true);
+
+    if (!isValidEmail) {
+      setErrorMessage(
+        <div>
+          <span>Email Address is not Valid!</span> <br />{" "}
+          <span style={{ color: "GrayText", fontSize: "0.8em" }}>
+            Please enter a valid email address (e.g., example@example.com).
+          </span>
+        </div>
+      );
+      setIsAlert(true);
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    UserService.registerUser({ email, password, username: email })
-      .then((res) => {
-        console.log(res);
-        
-      })
-      .catch((err) => {
-        setErrorMessage(MODAL_MSGES.LOGIN_INVALID);
-        // setLoading(false)
-        setLoading(false);
-        console.log(err);
+    if (!isValidPhoneNumber) {
+      setErrorMessage(
+        <div>
+          <span>Contact Number is not Valid!</span> <br />{" "}
+          <span style={{ color: "GrayText", fontSize: "0.8em" }}>
+            Please enter a valid sri lankan mobile number (eg: +94)
+          </span>
+        </div>
+      );
+      setIsAlert(true);
+      setLoading(false);
+      return;
+    }
+
+    if (!isValid) {
+      setErrorMessage(
+        <div>
+          <span>Password is not Valid!</span> <br />{" "}
+          <span style={{ color: "GrayText", fontSize: "0.8em" }}>
+            Password must be at least 8 characters long and contain a mix of
+            letters, numbers, and special characters for security reasons.
+          </span>
+        </div>
+      );
+      setIsAlert(true);
+      setLoading(false);
+      return;
+    }
+
+    if (!dateOfBirth[0] && !dateOfBirth[1] && !dateOfBirth[2]) {
+      setErrorMessage(alertMessage);
+      setIsAlert(true);
+      setLoading(false);
+      return;
+    }
+
+    const requiredData = {
+      email,
+      password,
+      username: extractUsernameFromEmail(email),
+      gender,
+      profileType,
+      firstName,
+      lastName,
+      bday: `${dateOfBirth[2]}-${dateOfBirth[1]}-${dateOfBirth[0]}`,
+      mobileNo,
+    };
+
+    const result = getNullOrUndefinedAttributes(requiredData);
+
+    if (result.length > 0) {
+      setErrorMessage(alertMessage);
+      setIsAlert(true);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoadingMsg("Creating Profile...");
+      const userResponse = await UserService.registerUser({
+        email: requiredData.email,
+        password: requiredData.password,
+        username: requiredData.username,
+        profileType: requiredData.profileType,
+        accountType: "free",
+        referenceNo: `${gender == "male" ? "MN" : "FE"}${dateOfBirth[2]}${
+          dateOfBirth[1]
+        }${dateOfBirth[0]}${firstName.charAt(0)}${lastName.charAt(
+          0
+        )}${randomNumberGen()}`,
       });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setLoadingMsg("Registering Basic Informations...");
+      await UserService.registerBasicInformation(
+        {
+          user_Id: userResponse?.user?.id,
+          firstName: requiredData.firstName,
+          lastName: requiredData.lastName,
+          birthDate: requiredData.bday,
+          gender: requiredData.gender,
+          age: calculateAgeFromBday(requiredData.bday),
+        },
+        userResponse?.jwt
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setLoadingMsg("Registering Contact Information...");
+      await UserService.registerContactInformation(
+        {
+          user_Id: userResponse?.user?.id,
+          mobile: requiredData.mobileNo,
+          email: userResponse?.user?.email,
+        },
+        userResponse?.jwt
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      window.location.reload(false);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setErrorMessage(
+        err?.response?.data?.error?.message ||
+          err?.response.message ||
+          err?.message
+      );
+      setLoading(false);
+      setIsAlert(true);
+    }
+  };
+
+  const dobUpdate = (index, newValue) => {
+    const newArray = [...dateOfBirth];
+    newArray[index] = newValue;
+    setDateOfBirth(newArray);
   };
 
   return (
@@ -71,6 +248,13 @@ function RegisterModal({ visible, setVisible, switchModals }) {
             paddingTop: "10px",
           }}
         >
+          <ErrorModal
+            open={isAlert}
+            onOpen={(value) => setIsAlert(value)}
+            title={"Failed Operation"}
+            description={errorMessage}
+          />
+          <LoadingFullscreen loading={loading} message={loadingMsg} />
           <span
             style={{ cursor: "pointer" }}
             className="material-symbols-outlined"
@@ -79,6 +263,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
             close
           </span>
         </div>
+        <div className="mb-3" style={{ textAlign: "center" }}>
+          <CImage
+            width={80}
+            height={80}
+            src={LOGOICON}
+            style={{ borderRadius: "50%" }}
+          />
+        </div>
+
         <span
           className="px-5"
           style={{ textAlign: "center", color: "GrayText" }}
@@ -96,7 +289,11 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   Interest
                 </li>
               ) : (
-                <li className="formbold-step-menu1">
+                <li
+                  className="formbold-step-menu1"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setFormType("first")}
+                >
                   <span>1</span>
                   Interest
                 </li>
@@ -107,7 +304,11 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   Basic
                 </li>
               ) : (
-                <li className="formbold-step-menu2">
+                <li
+                  className="formbold-step-menu2"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setFormType("second")}
+                >
                   <span>2</span>
                   Basic
                 </li>
@@ -118,7 +319,11 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   Credentials
                 </li>
               ) : (
-                <li className="formbold-step-menu3">
+                <li
+                  className="formbold-step-menu3"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setFormType("third")}
+                >
                   <span>3</span>
                   Credentials
                 </li>
@@ -132,30 +337,35 @@ function RegisterModal({ visible, setVisible, switchModals }) {
           {formType == "first" && (
             <div>
               <div className="animate__animated animate__zoomIn">
-              <p>
-              Share your passions, shape your story! Tell us about your interests to find connections that resonate with your heart. Let's create a profile that reflects the unique tapestry of you.
+                <p>
+                  Share your passions, shape your story! Tell us about your
+                  interests to find connections that resonate with your heart.
+                  Let's create a profile that reflects the unique tapestry of
+                  you.
                 </p>
 
                 <h4 style={{ textAlign: "left" }}>This Profile is for ...</h4>
-              
-                <CRow className="mt-4" style={{ display: "flex", gap: 10 }}>
-                  <CCol>
+
+                <CRow className="mt-2" style={{ display: "flex", gap: 10 }}>
+                  <CCol className="mt-2">
                     <CFormCheck
                       button={{
                         shape: "rounded-pill",
                         color: "dark",
                         variant: "outline",
-                        className: 'primary-btn '
+                        className: "primary-btn ",
                       }}
+                      value={"myself"}
+                      onChange={(e) => setProfileType(e.target.value)}
                       type="radio"
                       name="options-outlined"
                       id="success-myself"
                       autoComplete="off"
-                      label="Myself"
+                      label="My  Self"
                       defaultChecked
                     />
                   </CCol>
-                  <CCol>
+                  <CCol className="mt-2">
                     <CFormCheck
                       button={{
                         color: "dark",
@@ -163,13 +373,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                         shape: "rounded-pill",
                       }}
                       type="radio"
+                      value={"myson"}
+                      onChange={(e) => setGender(e.target.value)}
                       name="options-outlined"
                       id="danger-son"
                       autoComplete="off"
                       label="My Son"
                     />
                   </CCol>
-                  <CCol>
+                  <CCol className="mt-2">
                     <CFormCheck
                       button={{
                         color: "dark",
@@ -177,13 +389,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                         shape: "rounded-pill",
                       }}
                       type="radio"
+                      value={"mydaughter"}
+                      onChange={(e) => setProfileType(e.target.value)}
                       name="options-outlined"
                       id="danger-daughter"
                       autoComplete="off"
                       label="My Daughter"
                     />
                   </CCol>
-                  <CCol>
+                  <CCol className="mt-2">
                     <CFormCheck
                       button={{
                         color: "dark",
@@ -191,13 +405,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                         shape: "rounded-pill",
                       }}
                       type="radio"
+                      value={"mybrother"}
+                      onChange={(e) => setProfileType(e.target.value)}
                       name="options-outlined"
                       id="danger-brother"
                       autoComplete="off"
                       label="My Brother"
                     />
                   </CCol>
-                  <CCol>
+                  <CCol className="mt-2">
                     <CFormCheck
                       button={{
                         color: "dark",
@@ -205,13 +421,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                         shape: "rounded-pill",
                       }}
                       type="radio"
+                      value={"mysister"}
+                      onChange={(e) => setProfileType(e.target.value)}
                       name="options-outlined"
                       id="danger-sister"
                       autoComplete="off"
                       label="My Sister"
                     />
                   </CCol>
-                  <CCol>
+                  <CCol className="mt-2">
                     <CFormCheck
                       button={{
                         color: "dark",
@@ -219,13 +437,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                         shape: "rounded-pill",
                       }}
                       type="radio"
+                      value={"myfriend"}
+                      onChange={(e) => setProfileType(e.target.value)}
                       name="options-outlined"
                       id="danger-friend"
                       autoComplete="off"
                       label="My Friend"
                     />
                   </CCol>
-                  <CCol>
+                  <CCol xs={2} className="mt-2">
                     <CFormCheck
                       button={{
                         color: "dark",
@@ -233,10 +453,12 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                         shape: "rounded-pill",
                       }}
                       type="radio"
+                      value={"myrelative"}
+                      onChange={(e) => setProfileType(e.target.value)}
                       name="options-outlined"
                       id="danger-relative"
                       autoComplete="off"
-                      label="My Relative"
+                      label="My   Relative"
                     />
                   </CCol>
                 </CRow>
@@ -251,6 +473,8 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                       variant: "outline",
                       shape: "rounded-pill",
                     }}
+                    value={genders[0]}
+                    onChange={(e) => setGender(e.target.value)}
                     type="radio"
                     name="options-gneder"
                     id="success-male"
@@ -266,6 +490,8 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                       shape: "rounded-pill",
                     }}
                     type="radio"
+                    value={genders[1]}
+                    onChange={(e) => setProfileType(e.target.value)}
                     name="options-gneder"
                     id="danger-Female"
                     autoComplete="off"
@@ -288,8 +514,12 @@ function RegisterModal({ visible, setVisible, switchModals }) {
           {formType == "second" && (
             <div>
               <div className="animate__animated animate__zoomIn">
-                <p>Share your basics and let's kickstart your journey to love. </p>
-                <h4 style={{ textAlign: "left" }}>Your Name</h4>
+                <p>
+                  Share your basics and let's kickstart your journey to love.{" "}
+                </p>
+                <h4 style={{ textAlign: "left" }}>
+                  Your Name <span style={{ color: "red" }}>*</span>
+                </h4>
 
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
                   <CFormInput
@@ -299,8 +529,10 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     autoComplete="off"
                     placeholder="First Name"
                     floatingLabel="First Name"
-                    defaultChecked
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
+
                   <CFormInput
                     type="text"
                     name="options-outlined"
@@ -308,11 +540,13 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     autoComplete="off"
                     placeholder="Last Name"
                     floatingLabel="Last Name"
-                    defaultChecked
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
                 <h4 className="mt-4" style={{ textAlign: "left" }}>
-                  Date of birth
+                  Date of Birth
+                  <span style={{ color: "red" }}> *</span>
                 </h4>
 
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
@@ -323,8 +557,9 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     autoComplete="off"
                     placeholder="DD"
                     floatingLabel="DD"
-                    style={{ width: "100px" }}
-                    defaultChecked
+                    style={{ width: "75px" }}
+                    value={dateOfBirth[0]}
+                    onChange={(e) => dobUpdate(0, e.target.value)}
                   />
 
                   <CFormInput
@@ -334,8 +569,9 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     autoComplete="off"
                     placeholder="MM"
                     floatingLabel="MM"
-                    style={{ width: "100px" }}
-                    defaultChecked
+                    style={{ width: "75px" }}
+                    value={dateOfBirth[1]}
+                    onChange={(e) => dobUpdate(1, e.target.value)}
                   />
                   <CFormInput
                     type="number"
@@ -345,7 +581,8 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     placeholder="YYYY"
                     floatingLabel="YYYY"
                     style={{ width: "100px" }}
-                    defaultChecked
+                    value={dateOfBirth[2]}
+                    onChange={(e) => dobUpdate(2, e.target.value)}
                   />
                 </div>
               </div>
@@ -357,6 +594,15 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   Back
                 </CButton>
                 <CButton
+                  disabled={
+                    !(
+                      firstName &&
+                      lastName &&
+                      dateOfBirth[0] &&
+                      dateOfBirth[1] &&
+                      dateOfBirth[2]
+                    )
+                  }
                   className="primary-btn"
                   style={{ marginLeft: "10px" }}
                   onClick={() => setFormType("third")}
@@ -372,50 +618,75 @@ function RegisterModal({ visible, setVisible, switchModals }) {
             <div>
               <div className="animate__animated animate__zoomIn">
                 <p>
-                  An active email ID & phone No. are required to secure your
+                  An active email & contact number are required to secure your
                   profile
                 </p>
-                <h4 style={{ textAlign: "left" }}>Email ID</h4>
-
-                <div className="mt-4" style={{ display: "flex", gap: 10 }}>
-                  <CFormInput
-                    type="email"
-                    name="options-outlined"
-                    id="success-myself"
-                    autoComplete="off"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    defaultChecked
-                  />
-                </div>
-                <h4 className="mt-4" style={{ textAlign: "left" }}>
-                  Mobile No.
+                <h4 style={{ textAlign: "left" }}>
+                  Email Address <span style={{ color: "red" }}>*</span>
                 </h4>
 
-                <div className="mt-4" style={{ display: "flex", gap: 10 }}>
-                  <CFormInput
-                    type="text"
-                    name="options-outlined"
-                    id="success-myself"
-                    autoComplete="off"
-                    placeholder="Ex: 0771234567"
-                    defaultChecked
-                  />
+                <div className="mt-2">
+                  <CCol md={6}>
+                    <CFormInput
+                      type="email"
+                      name="options-outlined"
+                      id="success-myself"
+                      autoComplete="off"
+                      placeholder="Enter your email address"
+                      value={email}
+                      text="if your email is someone@email.com, your username will be stored as 'someone'."
+                      onChange={handleEmailChange}
+                    />
+                  </CCol>
                 </div>
+                <h4 className="mt-4" style={{ textAlign: "left" }}>
+                  Contact No.
+                  <span style={{ color: "red" }}>*</span>
+                </h4>
+
+                <div className="mt-" style={{ display: "flex", gap: 10 }}>
+                  <CCol md={6}>
+                    <CFormInput
+                      type="text"
+                      name="options-outlined"
+                      id="success-myself"
+                      autoComplete="off"
+                      placeholder="Ex: +94123456789"
+                      value={mobileNo}
+                      text="We use your mobile number for verification."
+                      onChange={handlePhoneNumberChange}
+                    />
+                  </CCol>
+                </div>
+
                 <h4 className="mt-4" style={{ textAlign: "left" }}>
                   Password
+                  <span style={{ color: "red" }}> *</span>
                 </h4>
-                <div className="mt-4" style={{ display: "flex", gap: 10 }}>
-                  <CFormInput
-                    type="password"
-                    name="options-outlined"
-                    id="success-myself"
-                    autoComplete="off"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    defaultChecked
-                  />
+                <div className="mt-2" style={{ display: "flex", gap: 10 }}>
+                  <CCol md={6}>
+                    <CFormInput
+                      type="password"
+                      name="options-outlined"
+                      id="success-myself"
+                      autoComplete="off"
+                      value={password}
+                      placeholder="Enter your password"
+                      text={
+                        <span
+                          style={{
+                            color: password ? (isValid ? "green" : "red") : "",
+                          }}
+                        >
+                          Password must be at least 8 characters long and
+                          contain a mix of letters, numbers, and special
+                          characters.
+                        </span>
+                      }
+                      onChange={handlePasswordChange}
+                      defaultChecked
+                    />
+                  </CCol>
                 </div>
               </div>
               <div className="mt-5" style={{ textAlign: "right" }}>
@@ -427,7 +698,11 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                 </CButton>
                 <CButton
                   className="primary-btn"
-                  disabled={loading}
+                  disabled={loading ||  !(
+                    email &&
+                    mobileNo &&
+                    password 
+                  )}
                   style={{ marginLeft: "10px" }}
                   onClick={() => registerUser()}
                 >

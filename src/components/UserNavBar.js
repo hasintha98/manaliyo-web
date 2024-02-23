@@ -11,7 +11,7 @@ import { COLORS } from "../common/colors";
 
 const UserNavBar = () => {
   const location = useLocation();
-  console.log(location)
+
   return (
     <>
       <CNavbar

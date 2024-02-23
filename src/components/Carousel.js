@@ -13,6 +13,7 @@ import {
 } from "@coreui/react";
 import React from "react";
 import BG from "../assets/c1.jpg";
+import MG from "../assets/5.jpg";
 import { HOMEPAGE } from "../common/typography";
 import { COLORS } from "../common/colors";
 
@@ -29,7 +30,7 @@ function CarouselHome() {
 
   return (
     <>
-      <CCarousel controls indicators style={carouselStyle}>
+      <CCarousel className="d-none d-md-flex" controls indicators style={carouselStyle}>
         <CCarouselItem className="caro-item" style={carouselStyle}>
           <CImage
             className="caro-image d-block w-100"
@@ -64,6 +65,53 @@ function CarouselHome() {
           <CImage
             className="d-block w-100"
             src={BG}
+            alt="slide 3"
+            style={imageStyle}
+          />
+          <CCarouselCaption
+            style={{ backdropFilter: "blur(3px)", borderRadius: "100px" }}
+            className="d-none d-md-block"
+          >
+            <h1>{HOMEPAGE.CAROUSEL.HEADING}</h1>
+            <p>{HOMEPAGE.CAROUSEL.PARA}</p>
+          </CCarouselCaption>
+        </CCarouselItem>
+      </CCarousel>
+      <CCarousel className="d-md-none" controls indicators style={carouselStyle}>
+        <CCarouselItem className="caro-item" style={carouselStyle}>
+          <CImage
+            className="caro-image d-block w-100"
+            src={MG}
+            alt="slide 1"
+            style={imageStyle}
+          />
+          <CCarouselCaption
+            style={{ backdropFilter: "blur(3px)", borderRadius: "100px" }}
+            className="d-none d-md-block"
+          >
+            <h1>{HOMEPAGE.CAROUSEL.HEADING}</h1>
+            <p>{HOMEPAGE.CAROUSEL.PARA}</p>
+          </CCarouselCaption>
+        </CCarouselItem>
+        <CCarouselItem style={carouselStyle}>
+          <CImage
+            className="d-block w-100"
+            src={MG}
+            alt="slide 2"
+            style={imageStyle}
+          />
+          <CCarouselCaption
+            style={{ backdropFilter: "blur(3px)", borderRadius: "100px" }}
+            className="d-none d-md-block"
+          >
+            <h1>{HOMEPAGE.CAROUSEL.HEADING}</h1>
+            <p>{HOMEPAGE.CAROUSEL.PARA}</p>
+          </CCarouselCaption>
+        </CCarouselItem>
+        <CCarouselItem style={carouselStyle}>
+          <CImage
+            className="d-block w-100"
+            src={MG}
             alt="slide 3"
             style={imageStyle}
           />

@@ -26,7 +26,7 @@ const NavBar = () => {
   const [visible, setVisible] = useState(false);
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [registerModalVisible, setRegisterModalVisible] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const scroll = () => {
     const section = document.querySelector( '#contact' );
@@ -39,13 +39,14 @@ const NavBar = () => {
     if (user?.jwt) {
       setLoggedIn(true)
     } else {
-      logOut()
+      if(loggedIn) logOut()
     }
   }, [])
 
   const logOut = () => {
     UserService.logout()
     setLoggedIn(false)
+    window.location.reload(false);
     // change status
   }
 
