@@ -6,7 +6,7 @@ import { UserService } from '../services/user.service';
 // Create an Axios instance with custom configuration, if needed
 export const axiosInstance = axios.create({
   baseURL: MAIN_API, // Replace with your API's base URL
-  timeout: 100000, // Set a timeout for requests (optional)
+  timeout: 10000000, // Set a timeout for requests (optional)
   headers: {
     'Content-Type': 'application/json',
     'Authorization': TokenService.getToken() ?`Bearer ${TokenService.getToken()}` : ''
