@@ -77,13 +77,24 @@ export const randomNumberGen = () => {
 export const filterQueryMaker = (filters) => {
   let query = "";
   filters.forEach((filter) => {
+    if (!filter.value || filter?.value?.length == 0) return;
     if (filter.query) query = query + filter.query;
     else if (!filter.table) {
       filter.value.forEach((value) => {
-        query = query + `&filters[${filter.key}][${filter.operation}]=${value}`;
+        if(value?.length > 0) {
+          filter.value.forEach((value) => {
+            query =
+              query +
+              `&filters[${filter.key}][${filter.operation}]=${value}`;
+          });
+        } else {
+          query = query + `&filters[${filter.key}][${filter.operation}]=${value}`;
+        }
+        
       });
     } else {
       filter.value.forEach((value) => {
+        if(!value) return
         query =
           query +
           `&filters[${filter.table}][${filter.key}][${filter.operation}]=${value}`;
@@ -98,4 +109,15 @@ export function captalizeFirstChar(text) {
   if (text) return text.charAt(0).toUpperCase() + text.slice(1);
 
   return "";
+}
+
+export function truncateTextWithEllipsis(text, maxWords) {
+  const words = text.split(' ');
+
+  if (words.length <= maxWords) {
+    return text;
+  }
+
+  const truncatedText = words.slice(0, maxWords).join(' ') + '...';
+  return truncatedText;
 }

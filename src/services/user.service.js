@@ -64,12 +64,18 @@ export const UserService = {
       throw error;
     }
   },
-  updateUser: async (id, data) => {
+  updateUser: async (id, data, noToken) => {
     const body = { data };
+
+    const headers = {
+      "Content-Type": "application/json",
+      "Authorization": ""
+    };
+
     try {
       const response = await axiosInstance.put(
-        "/auth/local/register/" + id,
-        body
+        "/users/" + id,
+        body, {headers}
       );
       return response.data;
     } catch (error) {
@@ -102,7 +108,7 @@ export const UserService = {
   getUsersWithFilters: async (filters) => {
     const query = filterQueryMaker(filters);
     try {
-      const response = await axiosInstance.get(`/users?populate=*${query}`);
+      const response = await axiosInstance.get(`/users?populate=*${query}&filters[id][$ne]=${TokenService.getUser()?.user?.id}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -154,6 +160,27 @@ export const UserService = {
           ...response.data,
         });
       }
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  checkUser: async (username, password) => {
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": ""
+        // Add any other custom headers you need here
+      };
+
+    
+
+      const response = await axiosInstance.post("/auth/local", {
+        identifier: username,
+        password,
+      }, { headers });
+     
       return response.data;
     } catch (error) {
       throw error;

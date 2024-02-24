@@ -20,6 +20,8 @@ import {
   COffcanvasBody,
   COffcanvasHeader,
   COffcanvasTitle,
+  CPagination,
+  CPaginationItem,
   CRow,
   CSidebar,
   CSidebarBrand,
@@ -32,25 +34,24 @@ import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
 import FilterOptions from "../components/FilterOptions";
 import { UserService } from "../services/user.service";
+import { truncateTextWithEllipsis } from "../common/common";
 
 function NewMatches() {
   const [userDetails, setUserDetails] = useState([]);
-  const [filters, setFilters] = useState([])
-  const [visible, setVisible] = useState(false);
+  const [filters, setFilters] = useState([]);
+  const [visible, setVisible] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
 
   useEffect(() => {
     UserService.getUsersWithFilters(filters)
       .then((res) => {
-        console.log(res)
+        console.log(res);
         setUserDetails(res);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [filters]);
-
-
 
   return (
     <div className="background-body">
@@ -71,18 +72,21 @@ function NewMatches() {
             />
           </COffcanvasHeader>
           <COffcanvasBody>
-            <FilterOptions onSearch={(searchFilters) => setFilters(searchFilters)} />
+            <FilterOptions
+              onSearch={(searchFilters) => setFilters(searchFilters)}
+            />
           </COffcanvasBody>
         </COffcanvas>
         <CRow>
           <CCol className="filter-section" sm={3}>
             <CCard style={{ minHeight: "500px" }}>
-              <FilterOptions onSearch={(searchFilters) => setFilters(searchFilters)}/>
+              <FilterOptions
+                onSearch={(searchFilters) => setFilters(searchFilters)}
+              />
             </CCard>
           </CCol>
-          <CCol   className="filter-btn" sm={3}>
+          <CCol className="filter-btn" sm={3}>
             <CButton
-          
               variant="ghost"
               style={{ color: COLORS.PRIMARY }}
               onClick={() => setFilterVisible(true)}
@@ -91,113 +95,203 @@ function NewMatches() {
             </CButton>
           </CCol>
           <CCol>
-            <CCard style={{ padding: 20, paddingInline: "50px" }}>
-              <h5>Members who match most of your Preferences</h5>
-              {userDetails && userDetails.map((user, i) => (
-              <CCard
-              onClick={() => {
-                window.location.href = '#/user/profile/' + user.id;
-              }}
-             
-              key={i}
-                className="mt-4 animate__animated animate__bounceInUp"
-                style={{
-                  backgroundColor: COLORS.FULL_LIGHT_2,
-                  border: "none",
-                  boxShadow:
-                    "0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 1px 10px 0 rgba(0, 0, 0, 0.19)",
-                    cursor: 'pointer'
-                }}
-              >
-                <CRow>
-                  <CCol md={4} style={{ textAlign: "center", padding: 20 }}>
-                    <CImage
-                      src={AVATAR}
-                      width={160}
-                      height={160}
-                      thumbnail
-                      style={{
-                        borderRadius: "50%",
-                        border: `solid 5px ${COLORS.LIGHT}`,
-                      }}
-                    />
-                  </CCol>
-                  <CCol style={{ padding: 20 }}>
-                    <span style={{ fontWeight: "bold", fontSize: "1.2em" }}>
-                      {user?.basic_information?.firstName} {user.basic_information?.lastName}
-                    </span>
-                    <br />
-                    <span style={{ color: "GrayText", fontSize: "0.9em" }}>
-                    {user?.basic_information?.age}Yrs
-                    </span>
-                    <br />
-                    <br />
-                    <span>
-                    {user?.basic_information?.description || "No Description Available..."}
-                    </span>
-                    <br />
-                    <div
-                      className="mt-4"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        paddingRight: "30px",
-                      }}
-                    >
-                      <div>
-                        <span className="material-symbols-outlined">
-                          favorite
-                        </span>
-                      </div>
-                      <div>
-                        <span className="material-symbols-outlined">
-                          thumb_up
-                        </span>
-                      </div>
-                      <div>
-                        <span
-                          onClick={() => setVisible(!visible)}
-                          className="material-symbols-outlined"
+            <CCard style={{ padding: 20 }}>
+              <h5 className="new-match-heading">
+                Members who match most of your Preferences
+              </h5>
+              {userDetails &&
+                userDetails.map((user, i) => (
+                  <CCard
+                    key={i}
+                    className="mt-4 animate__animated animate__bounceInUp"
+                    style={{
+                      backgroundColor:
+                        user?.accountType == "paid" ? COLORS.FULL_LIGHT_2 : "",
+                      border: "none",
+                      boxShadow:
+                        "0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 1px 10px 0 rgba(0, 0, 0, 0.19)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <CRow>
+                      <CCol
+                        md={4}
+                        style={{ textAlign: "center", height: "220px" }}
+                        onClick={() => {
+                          window.location.href = "#/user/profile/" + user.id;
+                        }}
+                      >
+                        <CImage
+                          src={AVATAR}
+                          style={{
+                            height: "100%",
+                            width: "100%",
+                            borderRadius: "0 0% 50% 0%",
+                            objectFit: "cover",
+                            borderRight: `8px solid ${COLORS.LIGHT}`,
+                            borderBottom: `4px solid ${COLORS.LIGHT}`,
+                          }}
+                        />
+                      </CCol>
+                      <CCol style={{ padding: 20 }}>
+                        <div
+                          onClick={() => {
+                            window.location.href = "#/user/profile/" + user.id;
+                          }}
                         >
-                          keyboard_arrow_down
-                        </span>
-                      </div>
-                    </div>
-                  </CCol>
-                </CRow>
-                <CRow className="pb-3">
-                  <CCol>
-                    <CCollapse visible={visible}>
-                      <div style={{ paddingInline: 20 }}>
-                        <CRow>
-                          <CCol>Age / Height:</CCol>
-                          <CCol>
-                            {user?.basic_information?.age || '-'} / {userDetails?.basic_information?.height || '-'}
-                          </CCol>
-                          <CCol>Religion / Community:</CCol>
-                          <CCol>{userDetails?.religion}</CCol>
-                        </CRow>
-                        <CRow>
-                          <CCol className="mt-1">Marital Status:</CCol>
-                          <CCol className="mt-1">
-                            {userDetails?.maritalStatus || '-'}
-                          </CCol>
-                          <CCol className="mt-1">Location:</CCol>
-                          <CCol className="mt-1">{userDetails?.location || '-'}</CCol>
-                        </CRow>
-                        <CRow>
-                          <CCol className="mt-1">Posted by:</CCol>
-                          <CCol className="mt-1"> {user?.profileType || '-'}</CCol>
-                          <CCol className="mt-1">Mother Tongue:</CCol>
-                          <CCol className="mt-1">{userDetails?.language || '-'}</CCol>
-                        </CRow>
-                      </div>
-                    </CCollapse>
-                  </CCol>
-                </CRow>
-              </CCard>
-               ))}
-             
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span
+                              style={{ fontWeight: "bold", fontSize: "1.2em" }}
+                            >
+                              {user?.basic_information?.firstName}{" "}
+                              {user.basic_information?.lastName}
+                            </span>
+
+                            <span
+                              style={{ paddingRight: "30px", color: COLORS.PRIMARY }}
+                              className="material-symbols-outlined"
+                            >
+                              favorite
+                            </span>
+                          </div>
+
+                          <span
+                            style={{ color: "GrayText", fontSize: "0.9em" }}
+                          >
+                            {user?.basic_information?.age}Yrs
+                          </span>
+
+                          <div
+                            className="mt-1"
+                            style={{
+                              paddingBottom: user?.basic_information
+                                ?.description
+                                ? "4px"
+                                : "50px",
+                            }}
+                          >
+                            {truncateTextWithEllipsis(
+                              user?.basic_information?.description ||
+                                "No Description Available...",
+                              30
+                            )}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            paddingRight: "30px",
+                          }}
+                        >
+                          {/* <div>
+                            <span className="material-symbols-outlined">
+                              thumb_up
+                            </span>
+                          </div> */}
+                          <div>
+                            <span
+                              onClick={() => {
+                                if (visible.includes(user.id)) {
+                                  setVisible((l) =>
+                                    l.filter((id) => id !== user.id)
+                                  );
+                                } else setVisible([...visible, user.id]);
+                              }}
+                              className="material-symbols-outlined"
+                            >
+                              keyboard_arrow_down
+                            </span>
+                          </div>
+                        </div>
+                      </CCol>
+                    </CRow>
+                    <CRow className="mb-3">
+                      <CCol>
+                        <CCollapse
+                          visible={visible.includes(user.id)}
+                          className="pt-2"
+                        >
+                          <div style={{ paddingInline: 20 }}>
+                            <CRow>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}> 
+                                Age / Height (Ft):
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                                {user?.basic_information?.age || "-"} /{" "}
+                                {user?.personal_information?.height || "-"}
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                                Religion:
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}> 
+                                {user?.basic_information?.religion ||
+                                  "-"}
+                              </CCol>
+                            </CRow>
+                            <CRow>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                                Marital Status:
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                                {user?.basic_information
+                                  ?.maritalStatus || "-"}
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                                Location:
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                                {user?.basic_information?.location + " / " +user?.location_information?.city ||
+                                  "-"}
+                              </CCol>
+                            </CRow>
+                            <CRow>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                                Posted by:
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                                {" "}
+                                {user?.profileType || "-"}
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                                Occupation
+                              </CCol>
+                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                                {user?.occupation_and_finance?.occupation ||
+                                  "-"}
+                              </CCol>
+                            </CRow>
+                          </div>
+                        </CCollapse>
+                      </CCol>
+                    </CRow>
+                  </CCard>
+                ))}
+              <div style={{ textAlign: "end" }}>
+                <CPagination
+                  className="mt-5 animate__animated animate__bounceInUp"
+                  aria-label="Page navigation example"
+                >
+                  <CPaginationItem
+                    style={{ color: COLORS.PRIMARY, cursor: "pointer" }}
+                    // onClick={() => setPage(metaData.page - 1)}
+                  >
+                    Previous
+                  </CPaginationItem>
+                  <CPaginationItem
+                    style={{ color: COLORS.PRIMARY, cursor: "pointer" }}
+                    // onClick={() => setPage(metaData.page + 1)}
+                  >
+                    Next
+                  </CPaginationItem>
+                </CPagination>
+              </div>
             </CCard>
           </CCol>
         </CRow>

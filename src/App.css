@@ -239,6 +239,14 @@ body {
   display: none;
 }
 
+.new-match-heading {
+  text-align: start;
+}
+
+.new-match-container {
+  padding: 20 !important;
+}
+
 
 
 @media only screen and (max-width: 600px) {
@@ -257,6 +265,14 @@ body {
 
   .swiper-web {
     display: none !important;
+  }
+
+  .new-match-heading {
+    text-align: center;
+  }
+
+  .new-match-container {
+    padding: 15
   }
 
   .swiper-mobile {

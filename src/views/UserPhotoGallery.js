@@ -28,6 +28,7 @@ import "../scss/uploader.css";
 import IMAGE from "../assets/2.jpg";
 import { UserService } from "../services/user.service";
 import TokenService from "../services/token.service";
+import CropperModal from "../components/modals/CropperModal";
 
 function UserPhotoGallery() {
   const [userDetails, setUserDetails] = useState({
@@ -73,14 +74,17 @@ function UserPhotoGallery() {
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
+  const [cropperVisible, setCropperVisible] = useState(false)
   const userId = TokenService.getUser()?.user?.id;
 
   const handleFileChange = (event) => {
+    setCropperVisible(false)
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedFile(reader.result);
+        setCropperVisible(true)
       };
       reader.readAsDataURL(file);
     }
@@ -160,6 +164,12 @@ function UserPhotoGallery() {
                     </CButton>
                   </div>
                 )}
+
+                <CropperModal 
+                visible={cropperVisible}
+                setVisible={() => setCropperVisible(false)}
+                photoURL={selectedFile}
+                />
 
                 <div id="response" class="hidden">
                   <div id="messages"></div>

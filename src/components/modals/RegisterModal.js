@@ -19,6 +19,7 @@ import {
   CRow,
 } from "@coreui/react";
 import React, { useState } from "react";
+import Select from 'react-select'
 import { COLORS } from "../../common/colors";
 import { UserService } from "../../services/user.service";
 import { MODAL_MSGES } from "../../common/typography";
@@ -32,7 +33,7 @@ import {
 } from "../../common/common";
 import TokenService from "../../services/token.service";
 import ErrorModal from "./ErrorModal";
-import { genders } from "../../common/const";
+import { districts, genders } from "../../common/const";
 
 function RegisterModal({ visible, setVisible, switchModals }) {
   const [formType, setFormType] = useState("first");
@@ -42,6 +43,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState([]);
+  const [district, setDistrict] = useState(districts[0])
 
   const [mobileNo, setMobileNo] = useState("");
   const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
@@ -93,6 +95,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
     setEmail(newEmail);
     setIsValidEmail(emailRegex.test(newEmail));
   };
+
 
   const registerUser = async () => {
     setIsAlert(false);
@@ -156,6 +159,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
       profileType,
       firstName,
       lastName,
+      location: district?.value,
       bday: `${dateOfBirth[2]}-${dateOfBirth[1]}-${dateOfBirth[0]}`,
       mobileNo,
     };
@@ -344,7 +348,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   you.
                 </p>
 
-                <h4 style={{ textAlign: "left" }}>This Profile is for ...</h4>
+                <h4 style={{ textAlign: "left" }}>Who are we creating this <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>profile </span> for?</h4>
 
                 <CRow className="mt-2" style={{ display: "flex", gap: 10 }}>
                   <CCol className="mt-2">
@@ -463,7 +467,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   </CCol>
                 </CRow>
                 <h4 className="mt-4" style={{ textAlign: "left" }}>
-                  Gender
+                How do you identify? Let us know your <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}> gender </span>.
                 </h4>
 
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
@@ -491,7 +495,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     }}
                     type="radio"
                     value={genders[1]}
-                    onChange={(e) => setProfileType(e.target.value)}
+                    onChange={(e) => setGender(e.target.value)}
                     name="options-gneder"
                     id="danger-Female"
                     autoComplete="off"
@@ -517,9 +521,9 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                 <p>
                   Share your basics and let's kickstart your journey to love.{" "}
                 </p>
-                <h4 style={{ textAlign: "left" }}>
-                  Your Name <span style={{ color: "red" }}>*</span>
-                </h4>
+                <h5 style={{ textAlign: "left" }}>
+                Hello there! What's your <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>name </span> ? <span style={{ color: "red" }}>*</span>
+                </h5>
 
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
                   <CFormInput
@@ -544,10 +548,28 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
-                <h4 className="mt-4" style={{ textAlign: "left" }}>
-                  Date of Birth
+                <h5 className="mt-4" style={{ textAlign: "left" }}>
+                Where do you call <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>home </span> ?
                   <span style={{ color: "red" }}> *</span>
-                </h4>
+                </h5>
+                <CCol md={5}>
+                <div className="mt-4" style={{ zIndex: "1000" }}>
+                  <Select
+                    type="text"
+                    name="options-outlined"
+                    id="success-myself"
+                    autoComplete="off"
+                    options={districts}
+                    value={district}
+                    onChange={(e) => setDistrict(e)}
+                  />
+
+                </div>
+                </CCol>
+                <h5 className="mt-4" style={{ textAlign: "left" }}>
+                Let's celebrate you! When's your <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>birth day </span>? 
+                  <span style={{ color: "red" }}> *</span>
+                </h5>
 
                 <div className="mt-4" style={{ display: "flex", gap: 10 }}>
                   <CFormInput
@@ -585,6 +607,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     onChange={(e) => dobUpdate(2, e.target.value)}
                   />
                 </div>
+               
               </div>
               <div className="mt-5" style={{ textAlign: "right" }}>
                 <CButton
@@ -622,7 +645,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   profile
                 </p>
                 <h4 style={{ textAlign: "left" }}>
-                  Email Address <span style={{ color: "red" }}>*</span>
+                What's your <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>email address</span> ? <span style={{ color: "red" }}>*</span>
                 </h4>
 
                 <div className="mt-2">
@@ -640,8 +663,8 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   </CCol>
                 </div>
                 <h4 className="mt-4" style={{ textAlign: "left" }}>
-                  Contact No.
-                  <span style={{ color: "red" }}>*</span>
+                What's your <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>phone number</span> ?
+                  <span style={{ color: "red" }}> *</span>
                 </h4>
 
                 <div className="mt-" style={{ display: "flex", gap: 10 }}>
@@ -660,7 +683,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                 </div>
 
                 <h4 className="mt-4" style={{ textAlign: "left" }}>
-                  Password
+                Choose a <span style={{color: COLORS.MID_DARK, fontWeight: 'bold'}}>password </span>for your account.
                   <span style={{ color: "red" }}> *</span>
                 </h4>
                 <div className="mt-2" style={{ display: "flex", gap: 10 }}>

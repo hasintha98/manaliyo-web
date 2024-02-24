@@ -18,6 +18,7 @@ import LOGOICON from "../../assets/test-logo-r.png";
 import { UserService } from "../../services/user.service";
 import { MODAL_MSGES } from "../../common/typography";
 import LoadingFullscreen from "../LoadingFullscreen";
+import GoogleLogin from "react-google-login";
 
 function LoginModal({ visible, setVisible, switchModals }) {
   const [email, setEmail] = useState("");
@@ -41,6 +42,11 @@ function LoginModal({ visible, setVisible, switchModals }) {
         console.log(err);
       });
   };
+
+  const responseGoogle = (response) => {
+    console.log(response);
+  };
+
   return (
     <>
       <CModal
@@ -49,7 +55,7 @@ function LoginModal({ visible, setVisible, switchModals }) {
         onClose={() => setVisible(false)}
       >
         <CModalBody>
-        <LoadingFullscreen loading={loading} />
+          <LoadingFullscreen loading={loading} />
           <div
             style={{
               display: "flex",
@@ -88,7 +94,7 @@ function LoginModal({ visible, setVisible, switchModals }) {
             </p>
           </div>
 
-          <div className="mt-4 p-4">
+          <div className="p-4">
             <CFormLabel
               style={{ display: "flex", alignItems: "center" }}
               htmlFor="exampleFormControlInput1"
@@ -99,7 +105,7 @@ function LoginModal({ visible, setVisible, switchModals }) {
               >
                 mail
               </span>{" "}
-              Email
+              Email / Username
             </CFormLabel>
             <CFormInput
               type="email"
@@ -127,37 +133,58 @@ function LoginModal({ visible, setVisible, switchModals }) {
               type="password"
               placeholder="Password"
               value={password}
+              onKeyPress={(e) => {
+                if(e.key == "Enter") loginUser()
+              }}
               onChange={(e) => setPassword(e.target.value)}
               id="exampleFormControlInput1"
               aria-describedby="exampleFormControlInputHelpInline"
             />
-            <span className="animate__animated animate__fadeInDown" style={{ color: "red", fontSize: "0.8em" }}>
+            <span
+              className="animate__animated animate__fadeInDown"
+              style={{ color: "red", fontSize: "0.8em" }}
+            >
               {errorMessage}
             </span>
             <div style={{ textAlign: "center" }}>
               <CButton
                 type="submit"
-                className="mt-5 "
+                className="mt-4 primary-btn"
                 disabled={loading}
                 onClick={loginUser}
                 style={{
-                  backgroundColor: COLORS.PRIMARY,
-                  border: "none",
                   width: "100%",
                 }}
               >
                 Sign In
               </CButton>
-
-              <p className="mt-2" style={{ fontSize: "0.8em" }}>
-                New User?{" "}
+              <p
+                className="mt-2"
+                style={{ fontSize: "0.8em", fontStyle: "italic" }}
+              >
+                New here? Let's get started!{" "}
                 <CLink
                   style={{ cursor: "pointer", color: COLORS.PRIMARY }}
                   onClick={() => switchModals(true)}
                 >
-                  Sign Up
+                  Sign up now
                 </CLink>
               </p>
+
+              <p
+                className="mt-4 mb-4"
+                style={{ color: "GrayText", fontStyle: "italic" }}
+              >
+                ----- Or -----
+              </p>
+
+              <GoogleLogin
+                clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                buttonText="Sign in with Google"
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy={"single_host_origin"}
+              />
             </div>
           </div>
         </CModalBody>

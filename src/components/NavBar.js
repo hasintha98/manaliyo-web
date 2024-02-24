@@ -107,12 +107,18 @@ const NavBar = () => {
                       />
                     </CDropdownToggle>
                     <CDropdownMenu>
+                    <CDropdownItem href="#/user/dashboard">
+                        My Dashboard
+                      </CDropdownItem>
                       <CDropdownItem href="#/user/myprofile">
                         User Profile
                       </CDropdownItem>
-                      <CDropdownItem href="#">Settings</CDropdownItem>
+                      <CDropdownItem href="#/user/photos">
+                        My Photos
+                      </CDropdownItem>
+                      {/* <CDropdownItem href="#">Settings</CDropdownItem> */}
                       <CDropdownDivider />
-                      <CDropdownItem onClick={logOut}>Sign Out</CDropdownItem>
+                      <CDropdownItem onClick={logOut} style={{color: COLORS.RED_BTN, cursor: 'pointer'}}>Sign Out</CDropdownItem>
                     </CDropdownMenu>
                   </CDropdown>
                 </div>

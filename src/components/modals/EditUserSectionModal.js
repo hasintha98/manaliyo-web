@@ -15,7 +15,14 @@ import { COLORS } from "../../common/colors";
 import { UserService } from "../../services/user.service";
 import TokenService from "../../services/token.service";
 import { calculateAgeFromBday } from "../../common/common";
-import { civilStatuses, genders, religions, residencyStatuses } from "../../common/const";
+import {
+  civilStatuses,
+  districts,
+  educationLevels,
+  genders,
+  religions,
+  residencyStatuses,
+} from "../../common/const";
 
 function EditUserSectionModal({
   visible,
@@ -35,6 +42,7 @@ function EditUserSectionModal({
   const [maritalStatus, setMaritalStatus] = useState("");
   const [gender, setGender] = useState("");
   const [religion, setReligion] = useState("");
+  const [district, setDistrict] = useState(districts[0]?.value)
 
   //personal
   const [height, setHeight] = useState("");
@@ -86,6 +94,7 @@ function EditUserSectionModal({
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("")
 
   useEffect(() => {
     console.log(keepUsername);
@@ -102,13 +111,12 @@ function EditUserSectionModal({
   const educationInfoId = userDetails?.education?.id;
   const locationInfoId = userDetails?.location_information?.id;
 
-  
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
     const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-      setNewPassword(newPassword);
+    setNewPassword(newPassword);
     setIsValid(passwordRegex.test(newPassword));
   };
 
@@ -140,6 +148,7 @@ function EditUserSectionModal({
         maritalStatus,
         religion,
         gender,
+        location: district,
         birthDate: birthDate,
         age: calculateAgeFromBday(birthDate),
         height: height ? height : 0,
@@ -187,7 +196,31 @@ function EditUserSectionModal({
       });
   };
 
-  const changePassword = () => {};
+  const changePassword = async () => {
+    setAlertMessage(null)
+    if(!(currentPassword && newPassword)) {
+      setAlertMessage("Please Fill Above Details")
+      return
+    }
+
+    if(!isValid) {
+      return
+    }
+
+    try {
+      const userStatus = await UserService.checkUser(TokenService.getUsername(), currentPassword)
+      if(userStatus?.jwt) {
+        const response = await UserService.updateUser(TokenService.getUser()?.user?.id, {password: newPassword})
+      } else {
+        setAlertMessage("Your Current Password is not valid")
+      }
+    } catch (e) {
+      console.log(e);
+      setAlertMessage("Your Current Password is not valid")
+    }
+    
+
+  };
 
   useEffect(() => {
     setDescription(userDetails?.basic_information?.description);
@@ -198,6 +231,7 @@ function EditUserSectionModal({
     setBirthDate(userDetails?.basic_information?.birthDate);
     setMaritalStatus(userDetails?.basic_information?.maritalStatus);
     setReligion(userDetails?.basic_information?.religion);
+    setDistrict(userDetails?.basic_information?.location);
 
     setHeight(userDetails?.personal_information?.height);
     setWeight(userDetails?.personal_information?.weight);
@@ -333,7 +367,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                    options={civilStatuses}
+                      options={civilStatuses}
                       value={maritalStatus}
                       onChange={(e) => setMaritalStatus(e.target.value)}
                     />
@@ -370,6 +404,19 @@ function EditUserSectionModal({
                       onChange={(e) => setReligion(e.target.value)}
                     />
                   </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Region:
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={districts}
+                      value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    />
+                  </CCol>
+                  
                 </CRow>
               </CCol>
             </CRow>
@@ -536,7 +583,8 @@ function EditUserSectionModal({
                     Highest Qualification:
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
-                    <CFormInput
+                    <CFormSelect
+                    options={educationLevels}
                       value={highestQualification}
                       onChange={(e) => setHighestQualification(e.target.value)}
                     />
@@ -688,7 +736,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                    options={residencyStatuses}
+                      options={residencyStatuses}
                       value={residencyStatus}
                       onChange={(e) => setResidencyStatus(e.target.value)}
                     />
@@ -810,12 +858,13 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={4} className="mt-1">
                     <CFormInput
-                    type="password"
+                      type="password"
                       value={newPassword}
                       onChange={handlePasswordChange}
                     />
                   </CCol>
                 </CRow>
+                <span className="mt-3" style={{color: 'red'}}>{alertMessage}</span>
                 <CRow className="mt-4 mb-4">
                   <CCol
                     xs={12}
@@ -824,14 +873,13 @@ function EditUserSectionModal({
                     style={{ color: "GrayText" }}
                   >
                     <span
-                          style={{
-                            color: newPassword ? (isValid ? "green" : "red") : "",
-                          }}
-                        >
-                         * Password must be at least 8 characters long and
-                          contain a mix of letters, numbers, and special
-                          characters.
-                        </span>
+                      style={{
+                        color: newPassword ? (isValid ? "green" : "red") : "",
+                      }}
+                    >
+                      * Password must be at least 8 characters long and contain
+                      a mix of letters, numbers, and special characters.
+                    </span>
                   </CCol>
                 </CRow>
               </CCol>

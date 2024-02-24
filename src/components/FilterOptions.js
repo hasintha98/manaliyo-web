@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import {
   Ethnicities,
   civilStatuses,
+  districts,
   educationLevels,
   foodPreferences,
   professions,
@@ -21,15 +22,20 @@ import {
 } from "../common/const";
 import { COLORS } from "../common/colors";
 
-function FilterOptions ({ title="", onSearch }) {
+function FilterOptions({ title = "", onSearch }) {
   const [filters, setFilters] = useState([]);
 
   const [age, setAge] = useState([0, 100]);
+  const [height, setHeight] = useState([0, 20]);
   const [selectedRegions, setSelectedRegions] = useState([]);
   const [selectedReligions, setSelectedReligions] = useState([]);
   const [selectedCivilStatus, setSelectedCivilStatus] = useState([]);
   const [profession, setProfession] = useState("");
-  const [selectedProfileType, setSelectedProfileType] = useState([])
+  const [selectedProfileType, setSelectedProfileType] = useState([]);
+
+  const [selectedDrinking, setSelectedDrinking] = useState([]);
+  const [selectedProfession, setSelectedProfession] = useState("");
+  const [selectedEducationLevel, setSelectedEducationLevel] = useState([]);
 
   const handleCivilStatusSelection = (civilStatus) => {
     if (selectedCivilStatus.includes(civilStatus)) {
@@ -59,14 +65,34 @@ function FilterOptions ({ title="", onSearch }) {
 
   const handleProfileType = (profileType) => {
     if (selectedProfileType.includes(profileType)) {
-      setSelectedProfileType(selectedProfileType.filter((r) => r !== profileType));
+      setSelectedProfileType(
+        selectedProfileType.filter((r) => r !== profileType)
+      );
     } else {
       setSelectedProfileType([...selectedProfileType, profileType]);
     }
   };
 
+  const handleEducationLevelSelection = (level) => {
+    if (selectedEducationLevel.includes(level)) {
+      setSelectedEducationLevel(
+        selectedEducationLevel.filter((r) => r !== level)
+      );
+    } else {
+      setSelectedEducationLevel([...selectedEducationLevel, level]);
+    }
+  };
+
+  console.log(selectedRegions);
+
   useEffect(() => {
     setFilters([
+      {
+        key: "height",
+        operation: "between",
+        query: `&filters[personal_information][height][$between]=${height[0]}&filters[personal_information][height][$between]=${height[1]}`,
+        value: height,
+      },
       {
         key: "Age",
         operation: "between",
@@ -74,27 +100,59 @@ function FilterOptions ({ title="", onSearch }) {
         value: age,
       },
       {
-        key: "Region",
-        table: "basic_information",
+        key: "location",
+        table: null,
         operation: "$eq",
         value: selectedRegions,
       },
       {
-        key: "Religion",
+        key: "religion",
         table: "basic_information",
         operation: "$eq",
         value: selectedReligions,
       },
       {
+        key: "maritalStatus",
+        table: "basic_information",
+        operation: "$eq",
+        value: selectedCivilStatus,
+      },
+      {
+        key: "highestQualification",
+        table: "education",
+        operation: "$eq",
+        value: selectedEducationLevel,
+      },
+      {
         key: "profileType",
         table: null,
-        operation: '$eq',
+        operation: "$eq",
         value: selectedProfileType,
       },
-      
+      {
+        key: "drinking",
+        table: "lifestyle_habit",
+        operation: "$eq",
+        value: selectedDrinking,
+      },
+      {
+        key: "occupation",
+        table: "occupation_and_finance",
+        operation: "$contains",
+        value: [selectedProfession],
+      },
     ]);
-    
-  }, [age, selectedRegions, selectedReligions, selectedProfileType]);
+  }, [
+    age,
+    height,
+    selectedRegions,
+    selectedReligions,
+    selectedCivilStatus,
+    selectedProfileType,
+    selectedProfession,
+    selectedDrinking,
+    selectedEducationLevel,
+  ]);
 
   const searchNow = () => {
     onSearch(filters);
@@ -105,13 +163,14 @@ function FilterOptions ({ title="", onSearch }) {
       <div style={{ display: "flex", justifyContent: "end" }}>
         <p
           className="px-3 pt-3"
-          style={{ textAlign: "end", color: "GrayText" }}
+          style={{ textAlign: "end", color: "GrayText", cursor: "pointer" }}
+          onClick={() => window.location.reload(false)}
         >
           Reset Filters
         </p>
         <p
           className="px-3 pt-3"
-          style={{ textAlign: "end", color: COLORS.PRIMARY, cursor: 'pointer' }}
+          style={{ textAlign: "end", color: COLORS.PRIMARY, cursor: "pointer" }}
           onClick={() => onSearch(filters)}
         >
           Search
@@ -156,21 +215,21 @@ function FilterOptions ({ title="", onSearch }) {
           <CAccordionBody>
             <CRow>
               <CCol>
-                {regions.map((region, key) => (
+                {districts.map((region, key) => (
                   <CFormCheck
                     key={key}
                     id={`region-${key}`}
-                    label={region}
-                    value={region}
-                    checked={selectedRegions.includes(region)} // Set checked state based on selection
-                    onChange={() => handleRegionSelection(region)}
+                    label={region.label}
+                    value={region.value}
+                    checked={selectedRegions.includes(region.value)} // Set checked state based on selection
+                    onChange={() => handleRegionSelection(region.value)}
                   />
                 ))}
               </CCol>
             </CRow>
           </CAccordionBody>
         </CAccordionItem>
-        <CAccordionItem itemKey={3}>
+        {/* <CAccordionItem itemKey={3}>
           <CAccordionHeader>Ethnicity</CAccordionHeader>
           <CAccordionBody>
             <CRow>
@@ -186,7 +245,7 @@ function FilterOptions ({ title="", onSearch }) {
               </CCol>
             </CRow>
           </CAccordionBody>
-        </CAccordionItem>
+        </CAccordionItem> */}
         <CAccordionItem itemKey={4}>
           <CAccordionHeader>Religion</CAccordionHeader>
           <CAccordionBody>
@@ -232,8 +291,8 @@ function FilterOptions ({ title="", onSearch }) {
               <CCol>
                 <CFormInput
                   placeholder="Enter Profession"
-                  value={profession}
-                  onChange={(e) => setProfession(e.target.value)}
+                  value={selectedProfession}
+                  onChange={(e) => setSelectedProfession(e.target.value)}
                 ></CFormInput>
               </CCol>
             </CRow>
@@ -250,6 +309,10 @@ function FilterOptions ({ title="", onSearch }) {
                     id="flexCheckDefault"
                     label={educationLevel}
                     value={educationLevel}
+                    checked={selectedEducationLevel.includes(educationLevel)} // Set checked state based on selection
+                    onChange={() =>
+                      handleEducationLevelSelection(educationLevel)
+                    }
                   />
                 ))}
               </CCol>
@@ -272,6 +335,8 @@ function FilterOptions ({ title="", onSearch }) {
                   id="exampleFormControlInput1"
                   floatingLabel="Min"
                   placeholder="Min"
+                  onChange={(e) => setHeight([e.target.value, height[1]])}
+                  value={height[0]}
                 />
                 <span style={{ marginTop: "15px" }}>To</span>
                 <CFormInput
@@ -279,6 +344,8 @@ function FilterOptions ({ title="", onSearch }) {
                   id="exampleFormControlInput1"
                   floatingLabel="Max"
                   placeholder="Max"
+                  onChange={(e) => setHeight([height[0], e.target.value])}
+                  value={height[1]}
                 />
               </CCol>
             </CRow>
@@ -323,7 +390,7 @@ function FilterOptions ({ title="", onSearch }) {
             </CRow>
           </CAccordionBody>
         </CAccordionItem>
-        <CAccordionItem itemKey={12}>
+        {/* <CAccordionItem itemKey={12}>
           <CAccordionHeader>ID verified</CAccordionHeader>
           <CAccordionBody>
             <CRow>
@@ -333,13 +400,13 @@ function FilterOptions ({ title="", onSearch }) {
               </CCol>
             </CRow>
           </CAccordionBody>
-        </CAccordionItem>
+        </CAccordionItem> */}
         <CAccordionItem itemKey={13}>
           <CAccordionHeader>Account Created by</CAccordionHeader>
           <CAccordionBody>
             <CRow>
               <CCol>
-              {profileTypes.map((type, key) => (
+                {profileTypes.map((type, key) => (
                   <CFormCheck
                     key={key}
                     id="flexCheckDefault"
@@ -349,7 +416,6 @@ function FilterOptions ({ title="", onSearch }) {
                     onChange={() => handleProfileType(type.value)}
                   />
                 ))}
-            
               </CCol>
             </CRow>
           </CAccordionBody>
