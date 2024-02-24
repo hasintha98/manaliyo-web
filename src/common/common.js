@@ -77,6 +77,7 @@ export const randomNumberGen = () => {
 export const filterQueryMaker = (filters) => {
   let query = "";
   filters.forEach((filter) => {
+    if(filter.skip) return
     if (!filter.value || filter?.value?.length == 0) return;
     if (filter.query) query = query + filter.query;
     else if (!filter.table) {

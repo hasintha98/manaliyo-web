@@ -26,7 +26,7 @@ function FilterOptions({ title = "", onSearch }) {
   const [filters, setFilters] = useState([]);
 
   const [age, setAge] = useState([0, 100]);
-  const [height, setHeight] = useState([0, 20]);
+  const [height, setHeight] = useState([null, null]);
   const [selectedRegions, setSelectedRegions] = useState([]);
   const [selectedReligions, setSelectedReligions] = useState([]);
   const [selectedCivilStatus, setSelectedCivilStatus] = useState([]);
@@ -92,6 +92,7 @@ function FilterOptions({ title = "", onSearch }) {
         operation: "between",
         query: `&filters[personal_information][height][$between]=${height[0]}&filters[personal_information][height][$between]=${height[1]}`,
         value: height,
+        skip: height[0] || height[1] ? false : true
       },
       {
         key: "Age",
