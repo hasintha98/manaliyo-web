@@ -35,7 +35,6 @@ export function checkNullOrUndefinedAttributes(data) {
       data[key] != "" &&
       data[key] != 0
     ) {
-      console.log(data[key]);
       return false;
     }
   }

@@ -71,7 +71,6 @@ function UserDashboard() {
   useEffect(() => {
     UserService.getUserCurrentUser()
       .then((res) => {
-        console.log(res)
         setUserDetails(res);
       })
       .catch((err) => {

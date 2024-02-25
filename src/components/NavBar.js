@@ -14,6 +14,8 @@ import {
   CDropdownItem,
   CDropdownDivider,
   CButton,
+  CDropdownHeader,
+  CDropdownItemPlain,
 } from "@coreui/react";
 import LOGO from "../assets/test-logo-caption.png";
 import LoginModal from "./modals/LoginModal";
@@ -46,6 +48,7 @@ const NavBar = () => {
   const logOut = () => {
     UserService.logout()
     setLoggedIn(false)
+    window.location.href = "/";
     window.location.reload(false);
     // change status
   }
@@ -106,7 +109,12 @@ const NavBar = () => {
                         src={Avatar}
                       />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu style={{width: '100px'}}>
+                    <CDropdownItemPlain style={{fontSize: '0.9em'}}>
+                        Sign In As: <br /><span style={{color: COLORS.PRIMARY}}>{TokenService.getUsername()}</span>
+                      </CDropdownItemPlain>
+                      
+                    <CDropdownDivider />
                     <CDropdownItem href="#/user/dashboard">
                         My Dashboard
                       </CDropdownItem>

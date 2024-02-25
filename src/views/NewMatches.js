@@ -45,7 +45,6 @@ function NewMatches() {
   useEffect(() => {
     UserService.getUsersWithFilters(filters)
       .then((res) => {
-        console.log(res);
         setUserDetails(res);
       })
       .catch((err) => {

@@ -104,7 +104,6 @@ function UserPhotoGallery() {
       .catch((e) => console.log(e));
   };
 
-  console.log(selectedFile);
   return (
     <div className="background-body">
       <NavBar />

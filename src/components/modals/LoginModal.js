@@ -32,7 +32,7 @@ function LoginModal({ visible, setVisible, switchModals }) {
     setLoading(true);
     UserService.login(email, password)
       .then((res) => {
-        console.log(res);
+        window.location.href = "#/user/dashboard";
         window.location.reload(false);
       })
       .catch((err) => {
@@ -134,7 +134,7 @@ function LoginModal({ visible, setVisible, switchModals }) {
               placeholder="Password"
               value={password}
               onKeyPress={(e) => {
-                if(e.key == "Enter") loginUser()
+                if (e.key == "Enter") loginUser();
               }}
               onChange={(e) => setPassword(e.target.value)}
               id="exampleFormControlInput1"

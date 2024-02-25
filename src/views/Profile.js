@@ -19,7 +19,6 @@ function Profile() {
   const getUserDetails = () => {
     UserService.getUserById(ref)
       .then((res) => {
-        console.log(res);
         setUserDetails(res);
       })
       .catch((err) => {

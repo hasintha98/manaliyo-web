@@ -43,7 +43,6 @@ function UserProfile() {
   const getCurrentUserDetails = () => {
     UserService.getUserCurrentUser()
       .then((res) => {
-        console.log(res);
         setUserDetails(res);
       })
       .catch((err) => {

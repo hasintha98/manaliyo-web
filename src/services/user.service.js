@@ -84,7 +84,6 @@ export const UserService = {
   },
 
   updateUserInfoBySection: async (id, data, sectionType) => {
-    console.log(data);
     const body = { data };
     try {
       const response = await axiosInstance[id ? "put" : "post"](

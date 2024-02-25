@@ -96,10 +96,6 @@ function EditUserSectionModal({
   const [isValid, setIsValid] = useState(false);
   const [alertMessage, setAlertMessage] = useState("")
 
-  useEffect(() => {
-    console.log(keepUsername);
-  }, [keepUsername]);
-
   const userId = TokenService.getUser()?.user?.id;
   const basicInfoId = userDetails?.basic_information?.id;
   const contactInfoId = userDetails?.contact_information?.id;
@@ -121,7 +117,6 @@ function EditUserSectionModal({
   };
 
   const saveBasicInfo = (sectionType) => {
-    console.log(sectionType);
     let data = null;
     let saveId = null;
     if (section == "personality") {
@@ -185,7 +180,6 @@ function EditUserSectionModal({
 
     UserService.updateUserInfoBySection(saveId, data, sectionType)
       .then((res) => {
-        console.log(res);
         if (section == "contact" && !keepUsername) {
         }
         reload(true);
@@ -229,9 +223,9 @@ function EditUserSectionModal({
     setLastName(userDetails?.basic_information?.lastName);
     setGender(userDetails?.basic_information?.gender);
     setBirthDate(userDetails?.basic_information?.birthDate);
-    setMaritalStatus(userDetails?.basic_information?.maritalStatus);
-    setReligion(userDetails?.basic_information?.religion);
-    setDistrict(userDetails?.basic_information?.location);
+    setMaritalStatus(userDetails?.basic_information?.maritalStatus || "");
+    setReligion(userDetails?.basic_information?.religion || "");
+    setDistrict(userDetails?.basic_information?.location || "");
 
     setHeight(userDetails?.personal_information?.height);
     setWeight(userDetails?.personal_information?.weight);
@@ -246,7 +240,7 @@ function EditUserSectionModal({
     setNativePlace(userDetails?.family_background?.nativePlace);
     setFamilyValues(userDetails?.family_background?.familyValues);
 
-    setHighestQualification(userDetails?.education?.highestQualification);
+    setHighestQualification(userDetails?.education?.highestQualification || "");
     setDetails(userDetails?.education?.details);
     setCollege(userDetails?.education?.college);
     setUniversity(userDetails?.education?.university);
@@ -261,7 +255,7 @@ function EditUserSectionModal({
     setZipCode(userDetails?.location_information?.zipCode);
     setCity(userDetails?.location_information?.city);
     setCountry(userDetails?.location_information?.country);
-    setResidencyStatus(userDetails?.location_information?.residencyStatus);
+    setResidencyStatus(userDetails?.location_information?.residencyStatus || "");
 
     setDrinking(userDetails?.lifestyle_habit?.drinking);
     setSmoking(userDetails?.lifestyle_habit?.smoking);
@@ -367,7 +361,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                      options={civilStatuses}
+                      options={[...civilStatuses, ""]}
                       value={maritalStatus}
                       onChange={(e) => setMaritalStatus(e.target.value)}
                     />
@@ -399,7 +393,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                      options={religions}
+                      options={[...religions, ""]}
                       value={religion}
                       onChange={(e) => setReligion(e.target.value)}
                     />
@@ -411,7 +405,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                      options={districts}
+                      options={[...districts, ""]}
                       value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     />
@@ -584,7 +578,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                    options={educationLevels}
+                    options={[...educationLevels, ""]}
                       value={highestQualification}
                       onChange={(e) => setHighestQualification(e.target.value)}
                     />
@@ -736,7 +730,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                      options={residencyStatuses}
+                      options={[...residencyStatuses, ""]}
                       value={residencyStatus}
                       onChange={(e) => setResidencyStatus(e.target.value)}
                     />
