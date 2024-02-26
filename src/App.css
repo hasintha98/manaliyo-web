@@ -6,7 +6,7 @@
   --dark: #4D273C;
   --navbar: #22242A;
   --body-color: #F1F1F2;
-  --text-gray: #ADB4CB
+  --text-gray: #ADB4CB;
 }
 
 html {
@@ -246,6 +246,8 @@ body {
 .new-match-container {
   padding: 20 !important;
 }
+
+
 
 
 

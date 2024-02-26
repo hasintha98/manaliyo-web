@@ -104,10 +104,10 @@ export const UserService = {
       throw error;
     }
   },
-  getUsersWithFilters: async (filters) => {
+  getUsersWithFilters: async (filters, page = 1, pageSize = 10) => {
     const query = filterQueryMaker(filters);
     try {
-      const response = await axiosInstance.get(`/users?populate=*${query}&filters[id][$ne]=${TokenService.getUser()?.user?.id}`);
+      const response = await axiosInstance.get(`/users?populate=*${query}&filters[id][$ne]=${TokenService.getUser()?.user?.id}&sort[0]=createdAt:desc`);
       return response.data;
     } catch (error) {
       throw error;
@@ -126,7 +126,6 @@ export const UserService = {
   getUserCurrentUser: async () => {
     try {
       const id = TokenService.getUser()?.user?.id;
-      console.log(id);
       const response = await axiosInstance.get(`/users/${id}?populate=*`);
       return response.data;
     } catch (error) {

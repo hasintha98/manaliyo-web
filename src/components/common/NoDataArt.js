@@ -12,26 +12,28 @@ function NoDataArt({
   description = "Fetching...",
   width = "50%",
   button = "",
-  buttonClicked
+  buttonClicked,
+  lottie = false,
+  background = "#F3F3F3"
 }) {
   return (
     visible && (
       <CRow className="mt-2">
-        <CCol style={{ textAlign: "center", padding: 20,backgroundColor: '#F3F3F3', borderRadius: '15px', width: '100%' }}>
-          <lord-icon
+        <CCol style={{ textAlign: "center", padding: 20,backgroundColor: background, borderRadius: '15px', width: '100%' }}>
+          {!lottie ?<lord-icon
             src={`https://cdn.lordicon.com/${icon}.json`}
             trigger="hover"
             colors={`primary:#0000,secondary:${COLORS.PRIMARY}`}
             style={{ width: "90px", height: "90px" }}
-          ></lord-icon>
-          {/* <Lottie
+          ></lord-icon> :
+         <Lottie
             loop={true}
             autoplay={true}
             size={10}
             style={{ height: "150px" }}
             className="match-animation"
             animationData={noDataAnimation}
-          /> */}
+          /> }
 
           <h6
             className="mt-3 desc-loricons"

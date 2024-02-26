@@ -70,30 +70,37 @@ function Profile() {
                 <CRow className="mt-4">
                   <CCol className="mt-1" xs={6} sm={3}>Age / Height:</CCol>
                   <CCol className="mt-1" xs={6} sm={3}>
-                    {userDetails?.basic_information?.age} /{" "}
+                    {userDetails?.basic_information?.age || "-"} /{" "}
                     {userDetails?.personal_information?.height?  userDetails?.personal_information?.height + `${"'"}` :
                       "-"}
                   </CCol >
                   <CCol className="mt-1" xs={6} sm={3}>Religion / Community:</CCol>
-                  <CCol className="mt-1" xs={6} sm={3}>{userDetails?.basic_information?.religion}</CCol>
+                  <CCol className="mt-1" xs={6} sm={3}>{userDetails?.basic_information?.religion || "-"}</CCol>
                 </CRow>
                 <CRow>
                   <CCol className="mt-1" xs={6} sm={3}>Marital Status:</CCol>
                   <CCol className="mt-1" xs={6} sm={3}>
-                    {userDetails?.basic_information?.maritalStatus}
+                    {userDetails?.basic_information?.maritalStatus || "-"}
                   </CCol>
                   <CCol className="mt-1" xs={6} sm={3}>Location:</CCol>
                   <CCol className="mt-1" xs={6} sm={3}>
-                    {userDetails?.location_information?.city}
+                  {userDetails?.basic_information?.location &&
+                                userDetails?.location_information?.city
+                                  ? captalizeFirstChar(userDetails?.basic_information?.location) +
+                                    " / " +
+                                    captalizeFirstChar(userDetails?.location_information?.city)
+                                  : captalizeFirstChar(userDetails?.basic_information?.location) ||
+                                  captalizeFirstChar(userDetails?.location_information?.city) ||
+                                    "-"}
                   </CCol>
                 </CRow>
                 <CRow>
                   <CCol className="mt-1" xs={6} sm={3}>Posted by:</CCol>
                   <CCol className="mt-1" xs={6} sm={3}>
-                    {captalizeFirstChar(userDetails?.profileType)}
+                    {captalizeFirstChar(userDetails?.profileType) || "-"}
                   </CCol>
-                  <CCol className="mt-1" xs={6} sm={3}>Mother Tongue:</CCol>
-                  <CCol className="mt-1" xs={6} sm={3}>{userDetails?.language}</CCol>
+                  <CCol className="mt-1" xs={6} sm={3}>Gender:</CCol>
+                  <CCol className="mt-1" xs={6} sm={3}>{captalizeFirstChar(userDetails?.gender) || "-"}</CCol>
                 </CRow>
               </div>
               <CRow className="d-none d-md-flex swpier-web mt-5">

@@ -1,0 +1,50 @@
+.ui-widgets {
+    position: relative;
+    display: inline-block;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 9rem;
+    margin: 1.5rem;
+    border: 1.2rem solid var(--primary);
+    box-shadow: inset 0 0 7px grey;
+    border-left-color: var(--primary);
+    border-top-color: var(--primary);
+    border-right-color: var(--light);
+    border-bottom-color: white;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/*  Apply css properties to the second 
+    child of ui-widgets class */
+.ui-widgets:nth-child(2) {
+    border-top-color: var(--primary);
+    border-right-color: white;
+    border-left-color: var(--primary);
+    border-bottom-color: white;
+}
+
+/*  Apply css properties to ui-widgets class 
+    and ui-values class*/
+.ui-widgets .ui-values {
+    top: 5px;
+    position: absolute;
+    left: 1px;
+    right: 0;
+    font-weight: 700;
+    font-size: 2.0rem;
+
+}
+
+/*  Apply css properties to ui-widgets 
+    class and ui-labels class*/
+.ui-widgets .ui-labels {
+
+    left: 0;
+    bottom: -50px;
+    text-shadow: 0 0 2px grey;
+    color: black;
+    position: absolute;
+    width: 100%;
+    font-size: 14px;
+}

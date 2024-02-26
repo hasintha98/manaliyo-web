@@ -34,20 +34,29 @@ import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
 import FilterOptions from "../components/FilterOptions";
 import { UserService } from "../services/user.service";
-import { truncateTextWithEllipsis } from "../common/common";
+import { captalizeFirstChar, truncateTextWithEllipsis } from "../common/common";
+import LoadingFullscreen from "../components/LoadingFullscreen";
+import NoDataArt from "../components/common/NoDataArt";
+import { MODAL_MSGES } from "../common/typography";
 
 function NewMatches() {
   const [userDetails, setUserDetails] = useState([]);
   const [filters, setFilters] = useState([]);
   const [visible, setVisible] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     UserService.getUsersWithFilters(filters)
       .then((res) => {
+        setIsLoading(false);
+        setFilterVisible(false);
         setUserDetails(res);
       })
       .catch((err) => {
+        setIsLoading(false);
+        setFilterVisible(false);
         console.log(err);
       });
   }, [filters]);
@@ -98,11 +107,27 @@ function NewMatches() {
               <h5 className="new-match-heading">
                 Members who match most of your Preferences
               </h5>
-              {userDetails &&
+              {isLoading ? (
+                <LoadingFullscreen
+                  loading={isLoading}
+                  message="Searching..."
+                  fulscreen={false}
+                  dark={true}
+                  height={120}
+                  textSize={"1.4em"}
+                />
+              ) : !userDetails || userDetails.length == 0 ? (
+                <NoDataArt
+                  lottie={true}
+                  visible={true}
+                  background="white"
+                  description={MODAL_MSGES.SEARCH_NO_DATA_DOUND}
+                />
+              ) : (
                 userDetails.map((user, i) => (
                   <CCard
                     key={i}
-                    className="mt-4 animate__animated animate__bounceInUp"
+                    className={`mt-4 animate__animated animate__bounceInUp `}
                     style={{
                       backgroundColor:
                         user?.accountType == "paid" ? COLORS.FULL_LIGHT_2 : "",
@@ -151,20 +176,35 @@ function NewMatches() {
                               {user.basic_information?.lastName}
                             </span>
 
-                            <span
-                              style={{ paddingRight: "30px", color: COLORS.PRIMARY }}
+                            {/* <span
+                              style={{
+                                paddingRight: "30px",
+                                color: COLORS.PRIMARY,
+                              }}
                               className="material-symbols-outlined"
                             >
                               favorite
-                            </span>
+                            </span> */}
+                            <div style={{ paddingRight: "25px" }}>
+                              <lord-icon
+                                src="https://cdn.lordicon.com/jjoolpwc.json"
+                                trigger="morph"
+                                stroke="bold"
+                                state="morph-two-hearts"
+                                colors="primary:#e776b6,secondary:#8f4a7e"
+                                style={{ wdith: 10 }}
+                              ></lord-icon>
+                            </div>
                           </div>
+                          <div style={{display: 'flex', gap:10}}>
 
                           <span
-                            style={{ color: "GrayText", fontSize: "0.9em" }}
+                            style={{ color: "GrayText", fontSize: "0.9em", paddingBottom: '5px' }}
                           >
                             {user?.basic_information?.age}Yrs
                           </span>
-
+                          <span className="material-symbols-outlined" style={{fontSize: '20px', color: COLORS.PRIMARY}}>{user?.basic_information?.gender == "male" ? 'man_2' : 'woman_2'}</span>
+                          </div>
                           <div
                             className="mt-1"
                             style={{
@@ -219,49 +259,121 @@ function NewMatches() {
                         >
                           <div style={{ paddingInline: 20 }}>
                             <CRow>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}> 
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: COLORS.MID_DARK }}
+                              >
                                 Age / Height (Ft):
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: "GrayText" }}
+                              >
                                 {user?.basic_information?.age || "-"} /{" "}
                                 {user?.personal_information?.height || "-"}
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: COLORS.MID_DARK }}
+                              >
                                 Religion:
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}> 
-                                {user?.basic_information?.religion ||
-                                  "-"}
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: "GrayText" }}
+                              >
+                                {user?.basic_information?.religion || "-"}
                               </CCol>
                             </CRow>
                             <CRow>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: COLORS.MID_DARK }}
+                              >
                                 Marital Status:
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
-                                {user?.basic_information
-                                  ?.maritalStatus || "-"}
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: "GrayText" }}
+                              >
+                                {user?.basic_information?.maritalStatus || "-"}
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: COLORS.MID_DARK }}
+                              >
                                 Location:
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
-                                {user?.basic_information?.location + " / " +user?.location_information?.city ||
-                                  "-"}
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: "GrayText" }}
+                              >
+                                {user?.basic_information?.location &&
+                                user?.location_information?.city
+                                  ? captalizeFirstChar(
+                                      user?.basic_information?.location
+                                    ) +
+                                    " / " +
+                                    captalizeFirstChar(
+                                      user?.location_information?.city
+                                    )
+                                  : captalizeFirstChar(
+                                      user?.basic_information?.location
+                                    ) ||
+                                    captalizeFirstChar(
+                                      user?.location_information?.city
+                                    ) ||
+                                    "-"}
                               </CCol>
                             </CRow>
                             <CRow>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: COLORS.MID_DARK }}
+                              >
                                 Posted by:
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: "GrayText" }}
+                              >
                                 {" "}
                                 {user?.profileType || "-"}
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: COLORS.MID_DARK}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: COLORS.MID_DARK }}
+                              >
                                 Occupation
                               </CCol>
-                              <CCol className="mt-1" xs={6} sm={3} style={{color: 'GrayText'}}>
+                              <CCol
+                                className="mt-1"
+                                xs={6}
+                                sm={3}
+                                style={{ color: "GrayText" }}
+                              >
                                 {user?.occupation_and_finance?.occupation ||
                                   "-"}
                               </CCol>
@@ -271,7 +383,9 @@ function NewMatches() {
                       </CCol>
                     </CRow>
                   </CCard>
-                ))}
+                ))
+              )}
+
               <div style={{ textAlign: "end" }}>
                 <CPagination
                   className="mt-5 animate__animated animate__bounceInUp"

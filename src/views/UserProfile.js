@@ -25,6 +25,7 @@ import EditUserSectionModal from "../components/modals/EditUserSectionModal";
 import { UserService } from "../services/user.service";
 import NoDataArt from "../components/common/NoDataArt";
 import {
+  captalizeFirstChar,
   checkNullOrUndefinedAttributes,
   getNullOrUndefinedAttributes,
 } from "../common/common";
@@ -88,17 +89,17 @@ function UserProfile() {
             >
               <CRow>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  Age / Height:
+                  Age / Height (Ft):
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  {userDetails?.basic_information?.age} /{" "}
-                  {userDetails?.personal_information?.height + `${"'"}` || "-"}
+                  {userDetails?.basic_information?.age || "-"} /{" "}
+                  {userDetails?.personal_information?.height || "-"}
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
                   Religion / Community:
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  {userDetails?.basic_information?.religion}
+                  {userDetails?.basic_information?.religion || "-"}
                 </CCol>
               </CRow>
               <CRow>
@@ -106,13 +107,20 @@ function UserProfile() {
                   Marital Status:
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  {userDetails?.basic_information?.maritalStatus}
+                  {captalizeFirstChar(userDetails?.basic_information?.maritalStatus) || "-"}
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
                   Location:
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  {userDetails?.location_information?.city}
+                {userDetails?.basic_information?.location &&
+                                userDetails?.location_information?.city
+                                  ? captalizeFirstChar(userDetails?.basic_information?.location) +
+                                    " / " +
+                                    captalizeFirstChar(userDetails?.location_information?.city)
+                                  : captalizeFirstChar(userDetails?.basic_information?.location) ||
+                                  captalizeFirstChar(userDetails?.location_information?.city) ||
+                                    "-"}
                 </CCol>
               </CRow>
               <CRow>
@@ -120,13 +128,13 @@ function UserProfile() {
                   Posted by:
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  {userDetails?.profileType}
+                  {captalizeFirstChar(userDetails?.profileType) || "-"}
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
                   Occupation:
                 </CCol>
                 <CCol className="mt-1" xs={6} sm={3}>
-                  {userDetails?.occupation_and_finance?.occupation}
+                  {captalizeFirstChar(userDetails?.occupation_and_finance?.occupation) || "-"}
                 </CCol>
               </CRow>
             </CCol>

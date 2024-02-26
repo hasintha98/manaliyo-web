@@ -102,7 +102,7 @@ function FilterOptions({ title = "", onSearch }) {
       },
       {
         key: "location",
-        table: null,
+        table: "basic_information",
         operation: "$eq",
         value: selectedRegions,
       },

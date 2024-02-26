@@ -24,6 +24,7 @@ import UserNavBar from "../components/UserNavBar";
 import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
 import { UserService } from "../services/user.service";
+import CircularProgress from "../components/common/CircularProgress";
 
 function UserDashboard() {
   const [userDetails, setUserDetails] = useState({
@@ -90,13 +91,8 @@ function UserDashboard() {
                 className="animate__animated animate__bounceIn animate__slower"
                 style={{ textAlign: "center" }}
               >
-                <CImage
-                  src={AVATAR}
-                  width={200}
-                  height={200}
-                  thumbnail
-                  style={{ borderRadius: "50%" }}
-                />
+                 <CircularProgress img={AVATAR} />
+               
               </div>
               <CRow className="mt-3 animate__animated animate__bounceIn animate__slower">
                 <span style={{ textAlign: "center" }}>
@@ -109,6 +105,7 @@ function UserDashboard() {
                   {userDetails?.contact_information?.mobile}
                 </span>
               </CRow>
+             
             </CCol>
             <CCol
               style={{ fontSize: "0.9em" }}

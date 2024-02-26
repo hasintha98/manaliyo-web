@@ -21,7 +21,7 @@ const UserNavBar = () => {
         style={{ zIndex: 0, backgroundColor: "#FFFFFF" }}
       >
         <CContainer style={{ display: "flex", justifyContent: "center" }}>
-          <CNavbarNav component="nav" expand="sm">
+          <CNavbarNav component="nav" expand="sm" style={{ flexWrap: "nowrap" }}>
             <CNavLink
               href="#/user/dashboard"
               style={{
