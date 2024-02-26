@@ -59,7 +59,15 @@ function Profile() {
                     {userDetails?.basic_information?.firstName}{" "}
                     {userDetails?.basic_information?.lastName}
                   </span>
-                  <span className="material-symbols-outlined pt-3" style={{color: 'red', cursor: 'pointer'}}>favorite</span>
+                  {/* <span className="material-symbols-outlined pt-3" style={{color: 'red', cursor: 'pointer'}}>favorite</span> */}
+                  <lord-icon
+                                src="https://cdn.lordicon.com/jjoolpwc.json"
+                                trigger="morph"
+                                stroke="bold"
+                                state="morph-two-hearts"
+                                colors="primary:#e776b6,secondary:#8f4a7e"
+                                style={{ wdith: 10, cursor: 'pointer' }}
+                              ></lord-icon>
                 </div>
 
                 <span style={{ color: "gray", fontSize: "0.8em" }}>
