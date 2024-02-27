@@ -37,6 +37,7 @@ import { useInView } from "react-intersection-observer";
 
 import "../App.css";
 import LoadingFullscreen from "../components/LoadingFullscreen";
+import TimeoutAuthModal from "../components/modals/TimeoutAuthModal";
 
 const iconStyle = {
   backgroundColor: COLORS.FULL_LIGHT,
