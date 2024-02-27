@@ -8,6 +8,8 @@ import Swiper from "swiper";
 import "swiper/css";
 import TokenService from "./services/token.service";
 import { UserService } from "./services/user.service";
+import { axiosInstance } from "./common/AxiosInstance";
+import TimeoutAuthModal from "./components/modals/TimeoutAuthModal";
 
 const HomePage = React.lazy(() => import("./views/HomePage"));
 const UserProfile = React.lazy(() => import("./views/UserProfile"));
@@ -24,6 +26,16 @@ const loading = (
 
 function App() {
   const [userLogin, setUserLogin] = useState(true)
+  const [showTimoutModal, setShowTimoutModal] = useState(false);
+
+  axiosInstance.interceptors.response.use(function (response) {
+    return response;
+  }, async function (error) {
+    if (error.response && error.response.status === 401) {
+      setShowTimoutModal(true);
+    }
+    return Promise.reject(error);
+  });
 
   useEffect(() => {
     const user = TokenService.getUser()
@@ -42,6 +54,10 @@ function App() {
   }
   
   return (
+    <>
+     <div>
+      {showTimoutModal && <TimeoutAuthModal open={showTimoutModal} />}
+    </div>
     <HashRouter>
       <Suspense fallback={loading}>
         <Routes>
@@ -106,6 +122,7 @@ function App() {
         </Routes>
       </Suspense>
     </HashRouter>
+    </>
   );
 }
 

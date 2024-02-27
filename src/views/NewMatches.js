@@ -46,9 +46,13 @@ function NewMatches() {
   const [filterVisible, setFilterVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const pageGap = 10;
+
+  const [startPage, setStartPage] = useState(0);
+  const [limitPage, setLimitPage] = useState(pageGap);
   useEffect(() => {
     setIsLoading(true);
-    UserService.getUsersWithFilters(filters)
+    UserService.getUsersWithFilters(filters, startPage, limitPage)
       .then((res) => {
         setIsLoading(false);
         setFilterVisible(false);
@@ -59,7 +63,7 @@ function NewMatches() {
         setFilterVisible(false);
         console.log(err);
       });
-  }, [filters]);
+  }, [filters, limitPage, startPage]);
 
   return (
     <div className="background-body">
@@ -107,6 +111,7 @@ function NewMatches() {
               <h5 className="new-match-heading">
                 Members who match most of your Preferences
               </h5>
+              <div className="card-list" style={{height: "1000px", overflowY: 'auto', overflowX: 'hidden', padding: '10px'}}>
               {isLoading ? (
                 <LoadingFullscreen
                   loading={isLoading}
@@ -196,14 +201,27 @@ function NewMatches() {
                               ></lord-icon>
                             </div>
                           </div>
-                          <div style={{display: 'flex', gap:10}}>
-
-                          <span
-                            style={{ color: "GrayText", fontSize: "0.9em", paddingBottom: '5px' }}
-                          >
-                            {user?.basic_information?.age}Yrs
-                          </span>
-                          <span className="material-symbols-outlined" style={{fontSize: '20px', color: COLORS.PRIMARY}}>{user?.basic_information?.gender == "male" ? 'man_2' : 'woman_2'}</span>
+                          <div style={{ display: "flex", gap: 10 }}>
+                            <span
+                              style={{
+                                color: "GrayText",
+                                fontSize: "0.9em",
+                                paddingBottom: "5px",
+                              }}
+                            >
+                              {user?.basic_information?.age}Yrs
+                            </span>
+                            <span
+                              className="material-symbols-outlined"
+                              style={{
+                                fontSize: "20px",
+                                color: COLORS.PRIMARY,
+                              }}
+                            >
+                              {user?.basic_information?.gender == "male"
+                                ? "man_2"
+                                : "woman_2"}
+                            </span>
                           </div>
                           <div
                             className="mt-1"
@@ -385,24 +403,34 @@ function NewMatches() {
                   </CCard>
                 ))
               )}
-
+</div>
               <div style={{ textAlign: "end" }}>
                 <CPagination
                   className="mt-5 animate__animated animate__bounceInUp"
                   aria-label="Page navigation example"
                 >
-                  <CPaginationItem
-                    style={{ color: COLORS.PRIMARY, cursor: "pointer" }}
-                    // onClick={() => setPage(metaData.page - 1)}
-                  >
-                    Previous
-                  </CPaginationItem>
-                  <CPaginationItem
-                    style={{ color: COLORS.PRIMARY, cursor: "pointer" }}
-                    // onClick={() => setPage(metaData.page + 1)}
-                  >
-                    Next
-                  </CPaginationItem>
+                  {startPage != 0 && (
+                    <CPaginationItem
+                      style={{ color: COLORS.PRIMARY, cursor: "pointer" }}
+                      onClick={() => {
+                        setStartPage(startPage - pageGap);
+                        setLimitPage(limitPage - pageGap);
+                      }}
+                    >
+                      Previous
+                    </CPaginationItem>
+                  )}
+                  {userDetails.length != 0 && userDetails.length >= pageGap && (
+                    <CPaginationItem
+                      style={{ color: COLORS.PRIMARY, cursor: "pointer" }}
+                      onClick={() => {
+                        setStartPage(startPage + pageGap);
+                        setLimitPage(limitPage + pageGap);
+                      }}
+                    >
+                      Next
+                    </CPaginationItem>
+                  )}
                 </CPagination>
               </div>
             </CCard>

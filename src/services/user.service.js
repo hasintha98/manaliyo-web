@@ -104,10 +104,10 @@ export const UserService = {
       throw error;
     }
   },
-  getUsersWithFilters: async (filters, page = 1, pageSize = 10) => {
+  getUsersWithFilters: async (filters, start = 0, limit = 0) => {
     const query = filterQueryMaker(filters);
     try {
-      const response = await axiosInstance.get(`/users?populate=*${query}&filters[id][$ne]=${TokenService.getUser()?.user?.id}&sort[0]=createdAt:desc`);
+      const response = await axiosInstance.get(`/users?populate=*${query}&filters[id][$ne]=${TokenService.getUser()?.user?.id}&start=${start}&limit=${limit}&sort[0]=createdAt:desc`);
       return response.data;
     } catch (error) {
       throw error;

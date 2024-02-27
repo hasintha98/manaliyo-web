@@ -256,6 +256,11 @@ body {
     display: none;
   }
 
+  .card-list::-webkit-scrollbar {
+    width: 0;
+  }
+  
+
   .filter-btn {
     display:block;
   }
