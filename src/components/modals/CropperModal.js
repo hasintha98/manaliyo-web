@@ -12,6 +12,7 @@ import Cropper from "react-easy-crop";
 import { UserService } from "../../services/user.service";
 import TokenService from "../../services/token.service";
 import LoadingFullscreen from "../LoadingFullscreen";
+import ErrorModal from "./ErrorModal";
 
 function CropperModal({ visible, setVisible, photoURL, imageNumber, reload }) {
   const [croppedArea, setcroppedArea] = useState(null);
@@ -19,6 +20,7 @@ function CropperModal({ visible, setVisible, photoURL, imageNumber, reload }) {
   const [zoom, setZoom] = useState(1);
   const [editedPhotoURL, seteditedPhotoURL] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("")
   const onCropComplete = useCallback(async (croppedArea, croppedAreaPixels) => {
     setcroppedArea(croppedAreaPixels);
   }, []);
@@ -85,6 +87,7 @@ function CropperModal({ visible, setVisible, photoURL, imageNumber, reload }) {
       return;
     }
     setLoading(true);
+    setErrorMsg("")
     const croppedImageUrl = await getCroppedImageUrl(photoURL, croppedArea);
     seteditedPhotoURL(croppedImageUrl);
     console.log(dataURLToBlob(croppedImageUrl));
@@ -106,6 +109,7 @@ function CropperModal({ visible, setVisible, photoURL, imageNumber, reload }) {
       })
       .catch((e) => {
         console.log(e);
+        setErrorMsg("Error Upload")
         setLoading(false);
       });
   };
@@ -121,6 +125,7 @@ function CropperModal({ visible, setVisible, photoURL, imageNumber, reload }) {
     >
       {" "}
       <LoadingFullscreen loading={loading} message="Uploading Image..." />
+      <ErrorModal title={"Upload Error!"} description={errorMsg} open={errorMsg} onOpen={(st) => setErrorMsg("")} />
       <CModalHeader style={{ fontWeight: "bold" }}>Capture Modal</CModalHeader>
       <CModalBody>
         <CRow>
