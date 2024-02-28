@@ -247,6 +247,39 @@ body {
   padding: 20 !important;
 }
 
+.gallery-img {
+  width: 100px;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.delete-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: red;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  display: none; /* Initially hide the delete icon */
+}
+
+.delete-icon i {
+  color: red;
+}
+
+.image-container:hover .delete-icon {
+  display: block; /* Show delete icon on hover */
+}
+
+.image-container:hover .gallery-img {
+  opacity: 0.7; /* Show delete icon on hover */
+}
+
 
 
 

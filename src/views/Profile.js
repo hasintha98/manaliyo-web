@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import { CCard, CCol, CContainer, CImage, CRow } from "@coreui/react";
-import AVATAR from "../assets/2.jpg";
+import AVATAR from "../assets/no_profile.webp";
 import { UserService } from "../services/user.service";
 import { useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -42,7 +42,7 @@ function Profile() {
                 className="animate__animated animate__bounceIn "
                 style={{ textAlign: "center" }}
               >
-                <CImage src={AVATAR} style={{ width: "100%" }} thumbnail />
+                <CImage src={userDetails?.user_image?.image1 || AVATAR} style={{ width: "100%" }} thumbnail />
               </div>
             </CCol>
             <CCol
@@ -51,7 +51,7 @@ function Profile() {
               style={{ fontSize: "1em" }}
             >
               <CRow className="d-md-none swpier-web ">
-                <ImageSlider height={"160px"} />
+                <ImageSlider imageObject={userDetails?.user_image} height={"160px"} />
               </CRow>
               <CRow>
                 <div style={{display: 'flex', gap: 10, justifyContent: 'space-between'}}>
@@ -112,7 +112,7 @@ function Profile() {
                 </CRow>
               </div>
               <CRow className="d-none d-md-flex swpier-web mt-5">
-                <ImageSlider height={"250px"} />
+                <ImageSlider height={"250px"} imageObject={userDetails?.user_image}/>
               </CRow>
             </CCol>
           </CRow>
@@ -204,7 +204,7 @@ function Profile() {
               </CCol>
               <hr></hr>
             </CRow>
-            <CRow>
+            <CRow className="mb-4">
             {userDetails?.occupation_and_finance && !checkNullOrUndefinedAttributes(userDetails?.occupation_and_finance) ?
               <CCol style={{ fontSize: "0.9em" }}>
                 <CRow>

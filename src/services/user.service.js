@@ -230,14 +230,24 @@ export const UserService = {
     }
   },
 
-  uploadUserImage: async (userId, file) => {
-
-    const formData = new FormData();
-    formData.append("files.image1", file);
-    formData.append("data", JSON.stringify({ user_Id: userId }));
+  uploadUserImage: async (formData) => {
 
     try {
-      const response = await axiosInstance.post("/user-images", formData);
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+      };
+
+      const response = await axiosInstance.post("/upload/img", formData, {headers});
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateUserImage: async (id, data) => {
+    const body = { data };
+    try {
+
+      const response = await axiosInstance.put("/user-images/" + id, body);
       return response.data;
     } catch (error) {
       throw error;

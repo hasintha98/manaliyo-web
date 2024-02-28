@@ -12,6 +12,7 @@ function LoadingFullscreen({
 }) {
   return (
     <div
+    style={{zIndex: 500}}
       className={`${fulscreen ? "fullscreen-overlay" : ""} ${
         loading ? "visible" : ""
       }`}

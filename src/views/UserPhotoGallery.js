@@ -25,83 +25,72 @@ import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
 import "../scss/uploader.css";
 
-import IMAGE from "../assets/2.jpg";
+import IMAGE from "../assets/no_profile.webp";
 import { UserService } from "../services/user.service";
 import TokenService from "../services/token.service";
 import CropperModal from "../components/modals/CropperModal";
 
 function UserPhotoGallery() {
-  const [userDetails, setUserDetails] = useState({
-    id: "21674891264786",
-    firstName: "Hasintha",
-    lastName: "Doluweera",
-    age: 25,
-    height: "5.6",
-    religion: "Buddhist, Buddhist",
-    maritalStatus: "Single",
-    location: "Colombo",
-    postedBy: "Self",
-    language: "sinhala",
-    dob: "1998-10-12",
-    country: "Sri Lanka",
-    SunSign: "Libra",
-    diet: "non-veg",
-    personalValues: "-",
-    bloodGroup: "B-",
-    healthInformation: "-",
-    disability: "-",
-    community: "Buddhist",
-    SubCommunity: "-",
-    fatherStatus: "",
-    motherStatus: "",
-    noOfBrothers: "",
-    noOfSisters: "",
-    familyLocation: "",
-    familyType: "",
-    nativePlace: "",
-    familyValues: "",
-    familyAffluence: "",
-    higherQualification: "",
-    workingWith: "",
-    collegeAttended: "",
-    workingAs: "",
-    annualIncome: "",
-    employerName: "",
-    currentResidance: "",
-    residencyStatus: "",
-    stateOfResidence: "",
-    zipCode: "",
-  });
+  const [userDetails, setUserDetails] = useState(null);
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [cropperVisible, setCropperVisible] = useState(false)
+  const [cropperVisible, setCropperVisible] = useState(false);
+  const [imageNumber, setImageNumber] = useState(1);
   const userId = TokenService.getUser()?.user?.id;
 
   const handleFileChange = (event) => {
-    setCropperVisible(false)
+    setCropperVisible(false);
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedFile(reader.result);
-        setCropperVisible(true)
+        setCropperVisible(true);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const uploadPhoto = async (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    getUserDetail();
+  }, []);
 
-    if (!selectedFile) {
-      alert("Please select a file");
-      return;
+  const findFirstEmptyImage = (data) => {
+    for (let i = 1; i <= 4; i++) {
+      const imageKey = `image${i}`;
+      if (!data[imageKey]) {
+        return i;
+      }
     }
-    UserService.uploadUserImage(userId, selectedFile)
+    return null; // If no empty image attribute found
+  };
+
+  const getUserDetail = () => {
+    UserService.getUserCurrentUser()
       .then((res) => {
-        console.log(res);
+        setUserDetails(res);
+        setImageNumber(findFirstEmptyImage(res?.user_image));
       })
-      .catch((e) => console.log(e));
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const removeUserImage = async (imageNumber) => {
+    const data = {
+      id: userDetails?.user_image?.id,
+      ["image" + imageNumber]: "",
+    };
+
+    console.log(data);
+
+    UserService.updateUserImage(userDetails?.user_image?.id, data)
+      .then((res) => {
+        getUserDetail();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -113,7 +102,7 @@ function UserPhotoGallery() {
           <CRow className="mt-3 animate__animated animate__bounceIn">
             <CForm
               id="file-upload-form"
-              onSubmit={uploadPhoto}
+              // onSubmit={uploadPhoto}
               class="uploader"
             >
               <CFormInput
@@ -144,12 +133,19 @@ function UserPhotoGallery() {
                       webp format. All photos uploaded are screened as per Photo
                       Guidelines and 98% of those get activated within 2 hours.
                     </div>
-                    <div id="notimage" class="hidden">
-                      Please select an image
-                    </div>
-                    <span id="file-upload-btn" class="btn btn-primary">
+                    {!imageNumber && (
+                      <div id="notimage">
+                        Looks like you've reached the photo limit! Consider
+                        removing some old photos
+                      </div>
+                    )}
+                    <div
+                      id="file-upload-btn"
+                      class="btn btn-primary"
+                      hidden={!imageNumber}
+                    >
                       Select a file
-                    </span>
+                    </div>
                   </div>
                 )}
                 {selectedFile && (
@@ -157,17 +153,21 @@ function UserPhotoGallery() {
                     <i class="fa fa-download" aria-hidden="true"></i>
 
                     <div>Photo is Selected</div>
-                    <CButton className="danger">Remove Photo</CButton>
-                    <CButton class="btn btn-primary" type="submit">
-                      Upload Now
-                    </CButton>
+                    <CButton className="danger" onClick={() => setSelectedFile(null)}>Remove Photo</CButton>
+                    
                   </div>
                 )}
 
-                <CropperModal 
-                visible={cropperVisible}
-                setVisible={() => setCropperVisible(false)}
-                photoURL={selectedFile}
+                <CropperModal
+                  visible={cropperVisible}
+                  setVisible={() => setCropperVisible(false)}
+                  photoURL={selectedFile}
+                  imageNumber={imageNumber}
+                  reload={() => {
+                    setCropperVisible(false);
+                    setSelectedFile(null);
+                    getUserDetail();
+                  }}
                 />
 
                 <div id="response" class="hidden">
@@ -183,48 +183,96 @@ function UserPhotoGallery() {
           <CRow>
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
-                <a target="_blank" href="img_5terre.jpg">
-                  <CImage src={IMAGE} alt="Cinque Terre" height={50} />
-                </a>
+                <div className="image-container">
+                  <CImage
+                    src={userDetails?.user_image?.image1 || IMAGE}
+                    alt="Cinque Terre"
+                    className="gallery-img"
+                    style={{ height: "305px" }}
+                  />
+                  {userDetails?.user_image?.image1 && (
+                    <div className="delete-icon">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ color: "white" }}
+                        onClick={() => removeUserImage(1)}
+                      >
+                        delete
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
-                <a target="_blank" href="img_5terre.jpg">
-                  <CImage src={IMAGE} alt="Cinque Terre" height={50} />
-                </a>
+                <div className="image-container">
+                  <CImage
+                    src={userDetails?.user_image?.image2 || IMAGE}
+                    alt="Cinque Terre"
+                    className="gallery-img"
+                    style={{ height: "305px" }}
+                  />
+                  {userDetails?.user_image?.image2 && (
+                    <div className="delete-icon">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ color: "white" }}
+                        onClick={() => removeUserImage(2)}
+                      >
+                        delete
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
-                <a target="_blank" href="img_5terre.jpg">
-                  <CImage src={IMAGE} alt="Cinque Terre" height={50} />
-                </a>
+                <div className="image-container">
+                  <CImage
+                    src={userDetails?.user_image?.image3 || IMAGE}
+                    alt="Cinque Terre"
+                    className="gallery-img"
+                    style={{ height: "305px" }}
+                  />
+                  {userDetails?.user_image?.image3 && (
+                    <div className="delete-icon">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ color: "white" }}
+                        onClick={() => removeUserImage(3)}
+                      >
+                        delete
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="animate__animated animate__zoomInLeft responsive mt-3">
               <div class="gallery">
-                <a target="_blank" href="img_5terre.jpg">
-                  <CImage src={IMAGE} alt="Cinque Terre" height={50} />
-                </a>
-              </div>
-            </div>
-
-            <div className="animate__animated animate__zoomInLeft responsive mt-3">
-              <div class="gallery">
-                <a target="_blank" href="img_5terre.jpg">
-                  <CImage src={IMAGE} alt="Cinque Terre" height={50} />
-                </a>
-              </div>
-            </div>
-
-            <div className="animate__animated animate__zoomInLeft responsive mt-3">
-              <div class="gallery">
-                <a target="_blank" href="img_5terre.jpg">
-                  <CImage src={IMAGE} alt="Cinque Terre" height={50} />
-                </a>
+                <div className="image-container">
+                  <CImage
+                    src={userDetails?.user_image?.image4 || IMAGE}
+                    alt="Cinque Terre"
+                    className="gallery-img"
+                    style={{ height: "305px" }}
+                  />
+                  {userDetails?.user_image?.image4 && (
+                    <div className="delete-icon">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ color: "white" }}
+                        onClick={() => removeUserImage(4)}
+                      >
+                        delete
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </CRow>

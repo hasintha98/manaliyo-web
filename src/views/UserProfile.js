@@ -17,7 +17,7 @@ import {
   CSidebarNav,
   CSidebarToggler,
 } from "@coreui/react";
-import AVATAR from "../assets/2.jpg";
+import AVATAR from "../assets/no_profile.webp";
 import UserNavBar from "../components/UserNavBar";
 import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
@@ -75,7 +75,7 @@ function UserProfile() {
                 style={{ textAlign: "center" }}
               >
                 <CImage
-                  src={AVATAR}
+                  src={userDetails?.user_image?.image1 || AVATAR}
                   width={160}
                   height={160}
                   thumbnail

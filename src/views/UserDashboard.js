@@ -19,7 +19,7 @@ import {
   CSidebarNav,
   CSidebarToggler,
 } from "@coreui/react";
-import AVATAR from "../assets/2.jpg";
+import AVATAR from "../assets/no_profile.webp";
 import UserNavBar from "../components/UserNavBar";
 import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
@@ -27,47 +27,7 @@ import { UserService } from "../services/user.service";
 import CircularProgress from "../components/common/CircularProgress";
 
 function UserDashboard() {
-  const [userDetails, setUserDetails] = useState({
-    id: "21674891264786",
-    firstName: "Hasintha",
-    lastName: "Doluweera",
-    age: 25,
-    height: "5.6",
-    religion: "Buddhist, Buddhist",
-    maritalStatus: "Single",
-    location: "Colombo",
-    postedBy: "Self",
-    language: "sinhala",
-    dob: "1998-10-12",
-    country: "Sri Lanka",
-    SunSign: "Libra",
-    diet: "non-veg",
-    personalValues: "-",
-    bloodGroup: "B-",
-    healthInformation: "-",
-    disability: "-",
-    community: "Buddhist",
-    SubCommunity: "-",
-    fatherStatus: "",
-    motherStatus: "",
-    noOfBrothers: "",
-    noOfSisters: "",
-    familyLocation: "",
-    familyType: "",
-    nativePlace: "",
-    familyValues: "",
-    familyAffluence: "",
-    higherQualification: "",
-    workingWith: "",
-    collegeAttended: "",
-    workingAs: "",
-    annualIncome: "",
-    employerName: "",
-    currentResidance: "",
-    residencyStatus: "",
-    stateOfResidence: "",
-    zipCode: "",
-  });
+  const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
     UserService.getUserCurrentUser()
@@ -91,7 +51,7 @@ function UserDashboard() {
                 className="animate__animated animate__bounceIn animate__slower"
                 style={{ textAlign: "center" }}
               >
-                 <CircularProgress img={AVATAR} />
+                 <CircularProgress img={userDetails?.user_image?.image1 || AVATAR} />
                
               </div>
               <CRow className="mt-3 animate__animated animate__bounceIn animate__slower">

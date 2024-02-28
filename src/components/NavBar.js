@@ -19,7 +19,7 @@ import {
 } from "@coreui/react";
 import LOGO from "../assets/test-logo-caption.png";
 import LoginModal from "./modals/LoginModal";
-import Avatar from "../assets/2.jpg";
+import Avatar from "../assets/no_profile.webp";
 import { COLORS } from "../common/colors";
 import RegisterModal from "./modals/RegisterModal";
 import TokenService from "../services/token.service";
@@ -29,6 +29,7 @@ const NavBar = () => {
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [registerModalVisible, setRegisterModalVisible] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
 
   const scroll = () => {
     const section = document.querySelector( '#contact' );
@@ -44,6 +45,21 @@ const NavBar = () => {
       if(loggedIn) logOut()
     }
   }, [])
+
+  useEffect(() => {
+    getUserDetail();
+  }, []);
+
+  const getUserDetail = () => {
+    UserService.getUserCurrentUser()
+      .then((res) => {
+        setUserDetails(res);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const logOut = () => {
     UserService.logout()
@@ -106,7 +122,7 @@ const NavBar = () => {
                           cursor: "pointer",
                         }}
                         shape="rounded"
-                        src={Avatar}
+                        src={userDetails?.user_image?.image1 || Avatar}
                       />
                     </CDropdownToggle>
                     <CDropdownMenu style={{width: '100px'}}>
