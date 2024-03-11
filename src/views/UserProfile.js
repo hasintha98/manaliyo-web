@@ -426,13 +426,13 @@ function UserProfile() {
                       Native Place:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                      {userDetails.nativePlace}
+                      {userDetails?.family_background?.nativePlace}
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
                       Family Values:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                      {userDetails.familyValues}
+                      {userDetails?.family_background?.familyValues}
                     </CCol>
                   </CRow>
                 </CCol>
@@ -824,27 +824,15 @@ function UserProfile() {
                 />
               )}
             </CRow>
+            
             <CRow className="mt-5">
-              <div
-                style={{
-                  backgroundColor: COLORS.MID_DARK,
-                  borderRadius: "10px",
-                  color: "white",
-                }}
-              >
-                <h5 className="p-1 mt-1" style={{ fontWeight: "bolder" }}>
+              <CCol style={{ display: "flex", gap: 10 }}>
+                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
                   Partner Preferences
-                </h5>
-              </div>
-            </CRow>
-
-            <CRow className="mt-4">
-              <CCol style={{ display: "flex", gap: 10 }}>
-                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
-                  Basic Info
                 </h6>
                 <span
                   className="material-symbols-outlined"
+                  onClick={() => handleEdit("partner")}
                   style={{
                     fontSize: "1.1em",
                     color: COLORS.PRIMARY,
@@ -857,222 +845,83 @@ function UserProfile() {
               <hr></hr>
             </CRow>
             <CRow>
-              <CCol style={{ fontSize: "0.9em" }}>
-                <CRow>
-                  <CCol>Age:</CCol>
-                  <CCol>{userDetails?.age}</CCol>
-                  <CCol>Diet:</CCol>
-                  <CCol>{userDetails?.diet}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Date of Birth:</CCol>
-                  <CCol className="mt-1">{userDetails?.dob}</CCol>
-                  <CCol className="mt-1">Personal Values:</CCol>
-                  <CCol className="mt-1">{userDetails?.personalValues}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Marital Status:</CCol>
-                  <CCol className="mt-1">{userDetails?.maritalStatus}</CCol>
-                  <CCol className="mt-1">Sun Sign:</CCol>
-                  <CCol className="mt-1">{userDetails?.SunSign}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Height:</CCol>
-                  <CCol className="mt-1">{userDetails?.height}</CCol>
-                  <CCol className="mt-1">Blood Group:</CCol>
-                  <CCol className="mt-1">{userDetails?.bloodGroup}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Grew up in:</CCol>
-                  <CCol className="mt-1">{userDetails?.country}</CCol>
-                  <CCol className="mt-1">Health Information:</CCol>
-                  <CCol className="mt-1">{userDetails?.healthInformation}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1">Disability:</CCol>
-                  <CCol className="mt-1">{userDetails?.disability}</CCol>
-                </CRow>
-              </CCol>
+              {userDetails?.locations_information &&
+              !checkNullOrUndefinedAttributes(
+                userDetails?.locations_information
+              ) ? (
+                <CCol style={{ fontSize: "0.9em" }}>
+                  <CRow>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                      Gender:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                     
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                      Drinking:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                     
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                      Smoking:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                     
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                      Highest Education:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                     
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                      Height:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                     
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>Location</CCol>
+                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                    City:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                    
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>Religion</CCol>
+                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                    Civil Status:
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>
+                    
+                    </CCol>
+                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                  </CRow>
+                </CCol>
+              ) : (
+                <NoDataArt
+                  icon={"wzrwaorf"}
+                  size={70}
+                  width="60%"
+                  visible={true}
+                  description="Let's find your perfect match! Add your partner preferences to help us tailor your matches to your desires."
+                  button="Let's find your perfect match"
+                  buttonClicked={(status) => handleEdit("partner")}
+                />
+              )}
             </CRow>
-
-            <CRow className="mt-3">
-              <CCol style={{ display: "flex", gap: 10 }}>
-                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
-                  Location Details
-                </h6>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "1.1em",
-                    color: COLORS.PRIMARY,
-                    cursor: "pointer",
-                  }}
-                >
-                  edit_square
-                </span>
-              </CCol>
-              <hr></hr>
-            </CRow>
-            <CRow>
-              <CCol style={{ fontSize: "0.9em" }}>
-                <CRow>
-                  <CCol>Age:</CCol>
-                  <CCol>{userDetails?.age}</CCol>
-                  <CCol>Diet:</CCol>
-                  <CCol>{userDetails?.diet}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Date of Birth:</CCol>
-                  <CCol className="mt-1">{userDetails?.dob}</CCol>
-                  <CCol className="mt-1">Personal Values:</CCol>
-                  <CCol className="mt-1">{userDetails?.personalValues}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Marital Status:</CCol>
-                  <CCol className="mt-1">{userDetails?.maritalStatus}</CCol>
-                  <CCol className="mt-1">Sun Sign:</CCol>
-                  <CCol className="mt-1">{userDetails?.SunSign}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Height:</CCol>
-                  <CCol className="mt-1">{userDetails?.height}</CCol>
-                  <CCol className="mt-1">Blood Group:</CCol>
-                  <CCol className="mt-1">{userDetails?.bloodGroup}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Grew up in:</CCol>
-                  <CCol className="mt-1">{userDetails?.country}</CCol>
-                  <CCol className="mt-1">Health Information:</CCol>
-                  <CCol className="mt-1">{userDetails?.healthInformation}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1">Disability:</CCol>
-                  <CCol className="mt-1">{userDetails?.disability}</CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-
-            <CRow className="mt-3">
-              <CCol style={{ display: "flex", gap: 10 }}>
-                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
-                  Education & Career
-                </h6>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "1.1em",
-                    color: COLORS.PRIMARY,
-                    cursor: "pointer",
-                  }}
-                >
-                  edit_square
-                </span>
-              </CCol>
-              <hr></hr>
-            </CRow>
-            <CRow>
-              <CCol style={{ fontSize: "0.9em" }}>
-                <CRow>
-                  <CCol>Age:</CCol>
-                  <CCol>{userDetails?.age}</CCol>
-                  <CCol>Diet:</CCol>
-                  <CCol>{userDetails?.diet}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Date of Birth:</CCol>
-                  <CCol className="mt-1">{userDetails?.dob}</CCol>
-                  <CCol className="mt-1">Personal Values:</CCol>
-                  <CCol className="mt-1">{userDetails?.personalValues}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Marital Status:</CCol>
-                  <CCol className="mt-1">{userDetails?.maritalStatus}</CCol>
-                  <CCol className="mt-1">Sun Sign:</CCol>
-                  <CCol className="mt-1">{userDetails?.SunSign}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Height:</CCol>
-                  <CCol className="mt-1">{userDetails?.height}</CCol>
-                  <CCol className="mt-1">Blood Group:</CCol>
-                  <CCol className="mt-1">{userDetails?.bloodGroup}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Grew up in:</CCol>
-                  <CCol className="mt-1">{userDetails?.country}</CCol>
-                  <CCol className="mt-1">Health Information:</CCol>
-                  <CCol className="mt-1">{userDetails?.healthInformation}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1">Disability:</CCol>
-                  <CCol className="mt-1">{userDetails?.disability}</CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-
-            <CRow className="mt-3">
-              <CCol style={{ display: "flex", gap: 10 }}>
-                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
-                  Other Details
-                </h6>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "1.1em",
-                    color: COLORS.PRIMARY,
-                    cursor: "pointer",
-                  }}
-                >
-                  edit_square
-                </span>
-              </CCol>
-              <hr></hr>
-            </CRow>
-            <CRow>
-              <CCol style={{ fontSize: "0.9em" }}>
-                <CRow>
-                  <CCol>Age:</CCol>
-                  <CCol>{userDetails?.age}</CCol>
-                  <CCol>Diet:</CCol>
-                  <CCol>{userDetails?.diet}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Date of Birth:</CCol>
-                  <CCol className="mt-1">{userDetails?.dob}</CCol>
-                  <CCol className="mt-1">Personal Values:</CCol>
-                  <CCol className="mt-1">{userDetails?.personalValues}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Marital Status:</CCol>
-                  <CCol className="mt-1">{userDetails?.maritalStatus}</CCol>
-                  <CCol className="mt-1">Sun Sign:</CCol>
-                  <CCol className="mt-1">{userDetails?.SunSign}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Height:</CCol>
-                  <CCol className="mt-1">{userDetails?.height}</CCol>
-                  <CCol className="mt-1">Blood Group:</CCol>
-                  <CCol className="mt-1">{userDetails?.bloodGroup}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1">Grew up in:</CCol>
-                  <CCol className="mt-1">{userDetails?.country}</CCol>
-                  <CCol className="mt-1">Health Information:</CCol>
-                  <CCol className="mt-1">{userDetails?.healthInformation}</CCol>
-                </CRow>
-                <CRow>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1"></CCol>
-                  <CCol className="mt-1">Disability:</CCol>
-                  <CCol className="mt-1">{userDetails?.disability}</CCol>
-                </CRow>
-              </CCol>
-            </CRow>
+          
           </div>
         </CCard>
       </CContainer>

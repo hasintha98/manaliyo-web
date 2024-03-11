@@ -20,6 +20,7 @@ import {
   districts,
   educationLevels,
   genders,
+  regions,
   religions,
   residencyStatuses,
 } from "../../common/const";
@@ -90,6 +91,17 @@ function EditUserSectionModal({
   const [mobile, setMobile] = useState("");
   const [keepUsername, setKeepUsername] = useState(true);
 
+  //partner
+  const [ppGender, setppGender] = useState("")
+  const [ppDrinking, setppDrinking] = useState("")
+  const [ppSmoking, setppSmoking] = useState("")
+  const [ppHighstEducation, setppHighstEducation] = useState("")
+  const [ppLocation, setppLocation] = useState("")
+  const [ppHeight, setppHeight] = useState("")
+  const [ppCity, setppCity] = useState("")
+  const [ppReligion, setppReligion] = useState("")
+  const [ppCivilStatus, setppCivilStatus] = useState("")
+
   //change password
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -106,6 +118,7 @@ function EditUserSectionModal({
   const careerInfoId = userDetails?.occupation_and_finance?.id;
   const educationInfoId = userDetails?.education?.id;
   const locationInfoId = userDetails?.location_information?.id;
+  const partnerInfoId = ""
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
@@ -135,6 +148,7 @@ function EditUserSectionModal({
       else if (section == "hobby") saveId = hobbiesInfoId;
       else if (section == "lifestyle") saveId = habitsInfoId;
       else if (section == "contact") saveId = contactInfoId;
+      else if (section == "partner") saveId = partnerInfoId;
 
       data = {
         user_Id: userId,
@@ -175,6 +189,8 @@ function EditUserSectionModal({
         hobbies: hobbyDetails,
         email,
         mobile,
+        position: "-",
+        complexion: "-"
       };
     }
 
@@ -880,6 +896,122 @@ function EditUserSectionModal({
             </CRow>
           </div>
         )}
+        {section == "partner" && (
+          <div>
+            <CRow className="mt-3">
+              <CCol style={{ display: "flex", gap: 10 }}>
+                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
+                  Partner Preferences
+                </h6>
+              </CCol>
+            </CRow>
+            <CRow className="mt-3">
+              <CCol style={{ fontSize: "0.9em" }}>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Gender:
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                      options={[...genders, "any"]}
+                      value={ppGender}
+                      onChange={(e) => setppGender(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Drinking:
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                      options={["Yes", "No", "Any"]}
+                      value={ppDrinking}
+                      onChange={(e) => setppDrinking(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Smoking :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                      options={["Yes", "No", "Any"]}
+                      value={ppSmoking}
+                      onChange={(e) => setppSmoking(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Highest Education :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                    options={[...educationLevels, ""]}
+                      value={highestQualification}
+                      onChange={(e) => setHighestQualification(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Height (Ft):
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormInput
+                      value={ppHeight}
+                      type="number"
+                      onChange={(e) => setppHeight(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Location :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                      options={[...regions, ""]}
+                      value={ppLocation}
+                      onChange={(e) => setppLocation(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  City :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={[...residencyStatuses, ""]}
+                      value={residencyStatus}
+                      onChange={(e) => setResidencyStatus(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Religion :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                      options={[...religions, ""]}
+                      value={ppReligion}
+                      onChange={(e) => setppReligion(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  Civil Status :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                  <CFormSelect
+                      options={[...civilStatuses, ""]}
+                      value={ppCivilStatus}
+                      onChange={(e) => setppCivilStatus(e.target.value)}
+                    />
+                  </CCol>
+                 
+                </CRow>
+              </CCol>
+            </CRow>
+          </div>
+        )}
         <CRow className="mt-3">
           <CCol style={{ display: "flex", justifyContent: "end" }}>
             <CButton
@@ -904,6 +1036,8 @@ function EditUserSectionModal({
                   saveBasicInfo("interests-and-hobbies");
                 else if (section == "contact")
                   saveBasicInfo("contactinformations");
+                  else if (section == "partner")
+                  saveBasicInfo("partnerpreferences");
                 else if (section == "password") changePassword();
                 else return;
               }}

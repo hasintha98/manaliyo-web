@@ -76,25 +76,24 @@ export const randomNumberGen = () => {
 export const filterQueryMaker = (filters) => {
   let query = "";
   filters.forEach((filter) => {
-    if(filter.skip) return
+    if (filter.skip) return;
     if (!filter.value || filter?.value?.length == 0) return;
     if (filter.query) query = query + filter.query;
     else if (!filter.table) {
       filter.value.forEach((value) => {
-        if(value?.length > 0) {
+        if (value?.length > 0) {
           filter.value.forEach((value) => {
             query =
-              query +
-              `&filters[${filter.key}][${filter.operation}]=${value}`;
+              query + `&filters[${filter.key}][${filter.operation}]=${value}`;
           });
         } else {
-          query = query + `&filters[${filter.key}][${filter.operation}]=${value}`;
+          query =
+            query + `&filters[${filter.key}][${filter.operation}]=${value}`;
         }
-        
       });
     } else {
       filter.value.forEach((value) => {
-        if(!value) return
+        if (!value) return;
         query =
           query +
           `&filters[${filter.table}][${filter.key}][${filter.operation}]=${value}`;
@@ -112,12 +111,68 @@ export function captalizeFirstChar(text) {
 }
 
 export function truncateTextWithEllipsis(text, maxWords) {
-  const words = text.split(' ');
+  const words = text.split(" ");
 
   if (words.length <= maxWords) {
     return text;
   }
 
-  const truncatedText = words.slice(0, maxWords).join(' ') + '...';
+  const truncatedText = words.slice(0, maxWords).join(" ") + "...";
   return truncatedText;
 }
+
+function countEmptyAttributes(obj) {
+  let count = 0;
+
+  // Iterate over the object's properties
+  for (let key in obj) {
+    // Check if the property value is empty
+    if (obj[key] === null || obj[key] === undefined || obj[key] === '') {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+export const CalculateProfileCompletion = (userData) => {
+  const basicInfoCount = Object.keys(userData?.basic_information).length;
+  const contactInfoCount = Object.keys(userData?.contact_information).length;
+  const educationnfoCount = Object.keys(userData?.education).length;
+  const familyInfoCount = Object.keys(userData?.family_background).length;
+  const hobbieInfoCount = Object.keys(userData?.interests_and_hobbie).length;
+  const lifestyleInfoCount = Object.keys(userData?.lifestyle_habit).length;
+  const locationInfoCount = Object.keys(userData?.location_information).length;
+  const occupationInfoCount = Object.keys(
+    userData?.occupation_and_finance
+  ).length;
+  const personalInfoCount = Object.keys(userData?.personal_information).length;
+  const photoInfoCount = Object.keys(userData?.user_image).length;
+
+  const total =
+    basicInfoCount +
+    contactInfoCount +
+    educationnfoCount +
+    familyInfoCount +
+    hobbieInfoCount +
+    lifestyleInfoCount +
+    locationInfoCount +
+    occupationInfoCount +
+    personalInfoCount +
+    photoInfoCount;
+
+  const completion =
+    total -
+    (countEmptyAttributes(userData?.basic_information) +
+      countEmptyAttributes(userData?.contact_information) +
+      countEmptyAttributes(userData?.education) +
+      countEmptyAttributes(userData?.family_background) +
+      countEmptyAttributes(userData?.interests_and_hobbie) +
+      countEmptyAttributes(userData?.lifestyle_habit) +
+      countEmptyAttributes(userData?.location_information) +
+      countEmptyAttributes(userData?.personal_information) +
+      countEmptyAttributes(userData?.occupation_and_finance) +
+      countEmptyAttributes(userData?.user_image));
+
+    return (completion / total) * 100
+};

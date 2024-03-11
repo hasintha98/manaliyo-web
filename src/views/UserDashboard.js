@@ -25,19 +25,26 @@ import FooterBar from "../components/FooterBar";
 import { COLORS } from "../common/colors";
 import { UserService } from "../services/user.service";
 import CircularProgress from "../components/common/CircularProgress";
+import { CalculateProfileCompletion } from "../common/common";
 
 function UserDashboard() {
   const [userDetails, setUserDetails] = useState(null);
+  const [profileCompletion, setProfileCompletion] = useState(0)
 
   useEffect(() => {
     UserService.getUserCurrentUser()
       .then((res) => {
         setUserDetails(res);
+        setProfileCompletion(CalculateProfileCompletion(res) || 0)
+        
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+ 
+  
 
   return (
     <div className="background-body">
@@ -51,7 +58,7 @@ function UserDashboard() {
                 className="animate__animated animate__bounceIn animate__slower"
                 style={{ textAlign: "center" }}
               >
-                 <CircularProgress img={userDetails?.user_image?.image1 || AVATAR} />
+                 <CircularProgress img={userDetails?.user_image?.image1 || AVATAR} count={profileCompletion} />
                
               </div>
               <CRow className="mt-3 animate__animated animate__bounceIn animate__slower">
