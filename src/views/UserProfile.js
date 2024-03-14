@@ -845,9 +845,9 @@ function UserProfile() {
               <hr></hr>
             </CRow>
             <CRow>
-              {userDetails?.locations_information &&
+              {userDetails?.partner_preference &&
               !checkNullOrUndefinedAttributes(
-                userDetails?.locations_information
+                userDetails?.partner_preference
               ) ? (
                 <CCol style={{ fontSize: "0.9em" }}>
                   <CRow>
@@ -855,13 +855,13 @@ function UserProfile() {
                       Gender:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                     
+                    {userDetails?.partner_preference?.gender || "-"}
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
                       Drinking:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                     
+                    {userDetails?.partner_preference?.drinking || "-"}
                     </CCol>
                   </CRow>
                   <CRow>
@@ -869,44 +869,44 @@ function UserProfile() {
                       Smoking:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                     
+                    {userDetails?.partner_preference?.smoking || "-"}
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
                       Highest Education:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                     
+                    {userDetails?.partner_preference?.highestEducation || "-"}
                     </CCol>
                   </CRow>
                   <CRow>
                     <CCol className="mt-1" xs={6} sm={3}>
-                      Height:
+                      Height (Ft):
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                     
+                    {userDetails?.partner_preference?.height || "-"}
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>Location</CCol>
-                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>   {userDetails?.partner_preference?.location || "-"}</CCol>
                   </CRow>
                   <CRow>
                     <CCol className="mt-1" xs={6} sm={3}>
                     City:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                    
+                    {userDetails?.partner_preference?.city || "-"}
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>Religion</CCol>
-                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>   {userDetails?.partner_preference?.religion || "-"}</CCol>
                   </CRow>
                   <CRow>
                     <CCol className="mt-1" xs={6} sm={3}>
                     Civil Status:
                     </CCol>
                     <CCol className="mt-1" xs={6} sm={3}>
-                    
+                    {userDetails?.partner_preference?.civilStatus || "-"}
                     </CCol>
-                    <CCol className="mt-1" xs={6} sm={3}></CCol>
-                    <CCol className="mt-1" xs={6} sm={3}></CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>Age Between</CCol>
+                    <CCol className="mt-1" xs={6} sm={3}>  {`${userDetails?.partner_preference?.age[0][0]} - ${userDetails?.partner_preference?.age[1][0]} Yrs`  || "-"}</CCol>
                   </CRow>
                 </CCol>
               ) : (
