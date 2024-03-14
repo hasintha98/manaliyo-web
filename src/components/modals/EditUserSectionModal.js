@@ -20,6 +20,7 @@ import {
   districts,
   educationLevels,
   genders,
+  regions,
   religions,
   residencyStatuses,
 } from "../../common/const";
@@ -42,7 +43,7 @@ function EditUserSectionModal({
   const [maritalStatus, setMaritalStatus] = useState("");
   const [gender, setGender] = useState("");
   const [religion, setReligion] = useState("");
-  const [district, setDistrict] = useState(districts[0]?.value)
+  const [district, setDistrict] = useState(districts[0]?.value);
 
   //personal
   const [height, setHeight] = useState("");
@@ -90,11 +91,23 @@ function EditUserSectionModal({
   const [mobile, setMobile] = useState("");
   const [keepUsername, setKeepUsername] = useState(true);
 
+  //partner
+  const [ppGender, setppGender] = useState("");
+  const [ppDrinking, setppDrinking] = useState("");
+  const [ppSmoking, setppSmoking] = useState("");
+  const [ppHighstEducation, setppHighstEducation] = useState("");
+  const [ppLocation, setppLocation] = useState("");
+  const [ppHeight, setppHeight] = useState("");
+  const [ppCity, setppCity] = useState("");
+  const [ppReligion, setppReligion] = useState("");
+  const [ppCivilStatus, setppCivilStatus] = useState("");
+  const [ppAge, setppAge] = useState([0,100])
+
   //change password
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isValid, setIsValid] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("")
+  const [alertMessage, setAlertMessage] = useState("");
 
   const userId = TokenService.getUser()?.user?.id;
   const basicInfoId = userDetails?.basic_information?.id;
@@ -106,6 +119,7 @@ function EditUserSectionModal({
   const careerInfoId = userDetails?.occupation_and_finance?.id;
   const educationInfoId = userDetails?.education?.id;
   const locationInfoId = userDetails?.location_information?.id;
+  const partnerInfoId = userDetails?.partner_preference?.id;
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
@@ -124,6 +138,20 @@ function EditUserSectionModal({
       data = {
         user_Id: userId,
         description,
+      };
+    } else if (section == "partner") {
+      saveId = partnerInfoId;
+      data = {
+        user_Id: userId,
+        gender: ppGender,
+        age: [[ppAge[0]], [ppAge[1]]],
+        drinking: ppDrinking,
+        smoking: ppSmoking,
+        height: ppHeight,
+        location: ppLocation,
+        city: ppCity,
+        religion: ppReligion,
+        civilStatus: ppCivilStatus
       };
     } else {
       if (section == "basicl") saveId = basicInfoId;
@@ -175,6 +203,8 @@ function EditUserSectionModal({
         hobbies: hobbyDetails,
         email,
         mobile,
+        position: "-",
+        complexion: "-",
       };
     }
 
@@ -191,29 +221,33 @@ function EditUserSectionModal({
   };
 
   const changePassword = async () => {
-    setAlertMessage(null)
-    if(!(currentPassword && newPassword)) {
-      setAlertMessage("Please Fill Above Details")
-      return
+    setAlertMessage(null);
+    if (!(currentPassword && newPassword)) {
+      setAlertMessage("Please Fill Above Details");
+      return;
     }
 
-    if(!isValid) {
-      return
+    if (!isValid) {
+      return;
     }
 
     try {
-      const userStatus = await UserService.checkUser(TokenService.getUsername(), currentPassword)
-      if(userStatus?.jwt) {
-        const response = await UserService.updateUser(TokenService.getUser()?.user?.id, {password: newPassword})
+      const userStatus = await UserService.checkUser(
+        TokenService.getUsername(),
+        currentPassword
+      );
+      if (userStatus?.jwt) {
+        const response = await UserService.updateUser(
+          TokenService.getUser()?.user?.id,
+          { password: newPassword }
+        );
       } else {
-        setAlertMessage("Your Current Password is not valid")
+        setAlertMessage("Your Current Password is not valid");
       }
     } catch (e) {
       console.log(e);
-      setAlertMessage("Your Current Password is not valid")
+      setAlertMessage("Your Current Password is not valid");
     }
-    
-
   };
 
   useEffect(() => {
@@ -255,13 +289,29 @@ function EditUserSectionModal({
     setZipCode(userDetails?.location_information?.zipCode);
     setCity(userDetails?.location_information?.city);
     setCountry(userDetails?.location_information?.country);
-    setResidencyStatus(userDetails?.location_information?.residencyStatus || "");
+    setResidencyStatus(
+      userDetails?.location_information?.residencyStatus || ""
+    );
 
     setDrinking(userDetails?.lifestyle_habit?.drinking);
     setSmoking(userDetails?.lifestyle_habit?.smoking);
 
     setHobbyDetails(userDetails?.interests_and_hobbie?.hobbies);
+
+    setppAge([userDetails?.partner_preference?.age[0][0], userDetails?.partner_preference?.age[1][0]])
+    setppCity(userDetails?.partner_preference?.city)
+    setppCivilStatus(userDetails?.partner_preference?.civilStatus)
+    setppDrinking(userDetails?.partner_preference?.drinking)
+    setppSmoking(userDetails?.partner_preference?.smoking)
+    setppGender(userDetails?.partner_preference?.gender)
+    setppHeight(userDetails?.partner_preference?.height)
+    setppHighstEducation(userDetails?.partner_preference?.highestQualification)
+    setppLocation(userDetails?.partner_preference?.location)
+    setppReligion(userDetails?.partner_preference?.religion)
+    
   }, [section, userDetails]);
+
+
 
   return (
     <CModal
@@ -407,10 +457,9 @@ function EditUserSectionModal({
                     <CFormSelect
                       options={[...districts, ""]}
                       value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
+                      onChange={(e) => setDistrict(e.target.value)}
                     />
                   </CCol>
-                  
                 </CRow>
               </CCol>
             </CRow>
@@ -578,7 +627,7 @@ function EditUserSectionModal({
                   </CCol>
                   <CCol xs={6} sm={3} className="mt-1">
                     <CFormSelect
-                    options={[...educationLevels, ""]}
+                      options={[...educationLevels, ""]}
                       value={highestQualification}
                       onChange={(e) => setHighestQualification(e.target.value)}
                     />
@@ -858,7 +907,9 @@ function EditUserSectionModal({
                     />
                   </CCol>
                 </CRow>
-                <span className="mt-3" style={{color: 'red'}}>{alertMessage}</span>
+                <span className="mt-3" style={{ color: "red" }}>
+                  {alertMessage}
+                </span>
                 <CRow className="mt-4 mb-4">
                   <CCol
                     xs={12}
@@ -874,6 +925,139 @@ function EditUserSectionModal({
                       * Password must be at least 8 characters long and contain
                       a mix of letters, numbers, and special characters.
                     </span>
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+          </div>
+        )}
+        {section == "partner" && (
+          <div>
+            <CRow className="mt-3">
+              <CCol style={{ display: "flex", gap: 10 }}>
+                <h6 style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
+                  Partner Preferences
+                </h6>
+              </CCol>
+            </CRow>
+            <CRow className="mt-3">
+              <CCol style={{ fontSize: "0.9em" }}>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Gender:
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={[...genders, "any"]}
+                      value={ppGender}
+                      onChange={(e) => setppGender(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Drinking:
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={["Yes", "No", "Any"]}
+                      value={ppDrinking}
+                      onChange={(e) => setppDrinking(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Smoking :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={["Yes", "No", "Any"]}
+                      value={ppSmoking}
+                      onChange={(e) => setppSmoking(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Highest Education :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={[...educationLevels, ""]}
+                      value={highestQualification}
+                      onChange={(e) => setHighestQualification(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Height (Ft):
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormInput
+                      value={ppHeight}
+                      type="number"
+                      onChange={(e) => setppHeight(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Location :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={[...regions, ""]}
+                      value={ppLocation}
+                      onChange={(e) => setppLocation(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    City :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormInput
+                      value={ppCity}
+                      onChange={(e) => setppCity(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Religion :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={[...religions, ""]}
+                      value={ppReligion}
+                      onChange={(e) => setppReligion(e.target.value)}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    Civil Status :
+                  </CCol>
+                  <CCol xs={6} sm={3} className="mt-1">
+                    <CFormSelect
+                      options={[...civilStatuses, ""]}
+                      value={ppCivilStatus}
+                      onChange={(e) => setppCivilStatus(e.target.value)}
+                    />
+                  </CCol>
+                  <CCol xs={4} sm={2} className="mt-1">
+                    Age :
+                  </CCol>
+                  <CCol xs={4} sm={2} className="mt-1">
+                    <CFormInput
+                      type="number"
+                      value={ppAge[0]}
+                      placeholder="min"
+                      onChange={(e) => setppAge([e.target.value, ppAge[1]])}
+                    />
+                  </CCol>
+                  <CCol xs={4} sm={2} className="mt-1">
+                    <CFormInput
+                      type="number"
+                      value={ppAge[1]}
+                      placeholder="max"
+                      onChange={(e) => setppAge([ppAge[0], e.target.value])}
+                    />
                   </CCol>
                 </CRow>
               </CCol>
@@ -904,6 +1088,8 @@ function EditUserSectionModal({
                   saveBasicInfo("interests-and-hobbies");
                 else if (section == "contact")
                   saveBasicInfo("contactinformations");
+                else if (section == "partner")
+                  saveBasicInfo("partner-preferences");
                 else if (section == "password") changePassword();
                 else return;
               }}
