@@ -124,6 +124,8 @@ export function truncateTextWithEllipsis(text, maxWords) {
 function countEmptyAttributes(obj) {
   let count = 0;
 
+  if(obj == null) return obj
+
   // Iterate over the object's properties
   for (let key in obj) {
     // Check if the property value is empty
@@ -136,18 +138,19 @@ function countEmptyAttributes(obj) {
 }
 
 export const CalculateProfileCompletion = (userData) => {
-  const basicInfoCount = Object.keys(userData?.basic_information).length;
-  const contactInfoCount = Object.keys(userData?.contact_information).length;
-  const educationnfoCount = Object.keys(userData?.education).length;
-  const familyInfoCount = Object.keys(userData?.family_background).length;
-  const hobbieInfoCount = Object.keys(userData?.interests_and_hobbie).length;
-  const lifestyleInfoCount = Object.keys(userData?.lifestyle_habit).length;
-  const locationInfoCount = Object.keys(userData?.location_information).length;
-  const occupationInfoCount = Object.keys(
+
+  const basicInfoCount = userData?.basic_information ? Object.keys(userData?.basic_information).length : 11;
+  const contactInfoCount = userData?.contact_information ? Object.keys(userData?.contact_information).length : 5;
+  const educationnfoCount = userData?.education ? Object.keys(userData?.education).length : 8;
+  const familyInfoCount = userData?.family_background ? Object.keys(userData?.family_background).length : 12;
+  const hobbieInfoCount = userData?.interests_and_hobbie ? Object.keys(userData?.interests_and_hobbie).length : 6;
+  const lifestyleInfoCount = userData?.lifestyle_habit ? Object.keys(userData?.lifestyle_habit).length : 6;
+  const locationInfoCount = userData?.location_information ? Object.keys(userData?.location_information).length : 9;
+  const occupationInfoCount = userData?.occupation_and_finance ? Object.keys(
     userData?.occupation_and_finance
-  ).length;
-  const personalInfoCount = Object.keys(userData?.personal_information).length;
-  const photoInfoCount = Object.keys(userData?.user_image).length;
+  ).length : 8;
+  const personalInfoCount = userData?.personal_information ? Object.keys(userData?.personal_information).length : 8;
+  const photoInfoCount = userData?.user_image ? Object.keys(userData?.user_image).length : 7;
 
   const total =
     basicInfoCount +
@@ -160,19 +163,20 @@ export const CalculateProfileCompletion = (userData) => {
     occupationInfoCount +
     personalInfoCount +
     photoInfoCount;
+   
 
   const completion =
     total -
-    (countEmptyAttributes(userData?.basic_information) +
-      countEmptyAttributes(userData?.contact_information) +
-      countEmptyAttributes(userData?.education) +
-      countEmptyAttributes(userData?.family_background) +
-      countEmptyAttributes(userData?.interests_and_hobbie) +
-      countEmptyAttributes(userData?.lifestyle_habit) +
-      countEmptyAttributes(userData?.location_information) +
-      countEmptyAttributes(userData?.personal_information) +
-      countEmptyAttributes(userData?.occupation_and_finance) +
-      countEmptyAttributes(userData?.user_image));
+    ((countEmptyAttributes(userData?.basic_information ) || 11) +
+    (countEmptyAttributes(userData?.contact_information ) || 5 )+
+    (countEmptyAttributes(userData?.education ) || 8)+
+    (countEmptyAttributes(userData?.family_background) || 12 )+
+    (countEmptyAttributes(userData?.interests_and_hobbie) || 6 )+
+    (countEmptyAttributes(userData?.lifestyle_habit) || 6 )+
+    (countEmptyAttributes(userData?.location_information) || 9 )+
+    (countEmptyAttributes(userData?.personal_information) || 8 )+
+    (countEmptyAttributes(userData?.occupation_and_finance) || 8 )+
+    (countEmptyAttributes(userData?.user_image) || 7));
 
     return (completion / total) * 100
 };

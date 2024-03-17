@@ -64,6 +64,29 @@ export const UserService = {
       throw error;
     }
   },
+  registerPartnerInformation: async (data, jwtToken) => {
+    const body = { data };
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        // No need to include Authorization header here
+        // Add any other custom headers you need here
+      };
+
+      if (jwtToken) {
+        headers["Authorization"] = `Bearer ${jwtToken}`;
+      }
+
+      const response = await axios.post(
+        `${MAIN_API}/partner-preferences`,
+        body,
+        { headers }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
   updateUser: async (id, data, noToken) => {
     const body = { data };
 
