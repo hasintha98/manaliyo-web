@@ -34,8 +34,9 @@ import {
 import TokenService from "../../services/token.service";
 import ErrorModal from "./ErrorModal";
 import { districts, genders } from "../../common/const";
+import GoogleLogin from "react-google-login";
 
-function RegisterModal({ visible, setVisible, switchModals }) {
+function RegisterModal({ visible, setVisible, switchModals, partnerData }) {
   const [formType, setFormType] = useState("first");
 
   const [profileType, setProfileType] = useState("myself");
@@ -216,6 +217,22 @@ function RegisterModal({ visible, setVisible, switchModals }) {
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
+      if(partnerData) {
+        setLoadingMsg("Registering Partner Information...");
+        await UserService.registerPartnerInformation(
+          {
+            user_Id: userResponse?.user?.id,
+            gender: partnerData?.ppGender,
+            age: [[partnerData?.ppAge[0]], [partnerData?.ppAge[1]]],
+            location: partnerData?.ppLocation,
+            religion: partnerData?.ppReligion
+          },
+          userResponse?.jwt
+        );
+  
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
       window.location.href = "#/user/dashboard";
       window.location.reload(false);
       setLoading(false);
@@ -236,6 +253,11 @@ function RegisterModal({ visible, setVisible, switchModals }) {
     newArray[index] = newValue;
     setDateOfBirth(newArray);
   };
+
+  const responseGoogle = (response) => {
+    console.log(response);
+  };
+
 
   return (
     <>
@@ -664,29 +686,7 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                   An active email & contact number are required to secure your
                   profile
                 </p>
-                <h4 style={{ textAlign: "left" }}>
-                  What's your{" "}
-                  <span style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
-                    email address
-                  </span>{" "}
-                  ? <span style={{ color: "red" }}>*</span>
-                </h4>
-
-                <div className="mt-2">
-                  <CCol md={6}>
-                    <CFormInput
-                      type="email"
-                      name="options-outlined"
-                      id="success-myself"
-                      autoComplete="off"
-                      placeholder="Enter your email address"
-                      value={email}
-                      text="if your email is someone@email.com, your username will be stored as 'someone'."
-                      onChange={handleEmailChange}
-                    />
-                  </CCol>
-                </div>
-                <h4 className="mt-4" style={{ textAlign: "left" }}>
+                <h4 className="mt-2" style={{ textAlign: "left" }}>
                   What's your{" "}
                   <span style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
                     phone number
@@ -708,6 +708,39 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     />
                   </CCol>
                 </div>
+                
+               
+              <CCol md={6} className="mt-3">
+                <hr />
+               <span style={{ width: '100%', color: COLORS.PRIMARY}}>Setup Your Account!</span> 
+            
+              </CCol>
+             
+              
+
+                <h4 className="mt-4" style={{ textAlign: "left" }}>
+                  What's your{" "}
+                  <span style={{ color: COLORS.MID_DARK, fontWeight: "bold" }}>
+                    email address
+                  </span>{" "}
+                  ? <span style={{ color: "red" }}>*</span>
+                </h4>
+
+                <div className="mt-2">
+                  <CCol md={6}>
+                    <CFormInput
+                      type="email"
+                      name="options-outlined"
+                      id="success-myself"
+                      autoComplete="off"
+                      placeholder="Enter your email address"
+                      value={email}
+                      text="if your email is someone@email.com, your username will be stored as 'someone'."
+                      onChange={handleEmailChange}
+                    />
+                  </CCol>
+                </div>
+               
 
                 <h4 className="mt-4" style={{ textAlign: "left" }}>
                   Choose a{" "}
@@ -742,6 +775,24 @@ function RegisterModal({ visible, setVisible, switchModals }) {
                     />
                   </CCol>
                 </div>
+                <CCol md={6}>
+                <p
+                className="mt-4 mb-4"
+                style={{ color: "GrayText", fontStyle: "italic", textAlign: 'center' }}
+              >
+                ----- Or -----
+              </p>
+                </CCol>
+                <CCol md={6}  style={{textAlign: 'center' }} className="mt-4">
+               
+                <GoogleLogin
+                clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                buttonText="Sign Up with Google"
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy={"single_host_origin"}
+              />
+                </CCol>
               </div>
               <div className="mt-5" style={{ textAlign: "right" }}>
                 <CButton

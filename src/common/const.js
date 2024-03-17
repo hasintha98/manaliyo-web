@@ -1,6 +1,33 @@
 export const MAIN_API = "https://staging-cms.manaliyo.lk/api";
 
-export const regions = ["Ampara", "Anuradhapura"];
+export const regions = [
+  "Ampara",
+  "Anuradhapura",
+  "Badulla",
+  "Batticaloa",
+  "Colombo",
+  "Galle",
+  "Gampaha",
+  "Hambantota",
+  "Jaffna",
+  "Kalutara",
+  "Kandy",
+  "Kegalle",
+  "Kilinochchi",
+  "Kurunegala",
+  "Mannar",
+  "Matale",
+  "Matara",
+  "Monaragala",
+  "Mullaitivu",
+  "Nuwara Eliya",
+  "Polonnaruwa",
+  "Puttalam",
+  "Ratnapura",
+  "Trincomalee",
+  "Vavuniya"
+];
+
 
 export const districts = [
   { label: 'Ampara', value: 'Ampara' },
@@ -34,7 +61,15 @@ export const genders = ["male", "female"];
 
 export const Ethnicities = ["Sinhalease", "Tamil", "Musilm"];
 
-export const religions = ["Buddhist", "Christian", "Catholic", "Muslim"];
+export const religions = [
+  "Buddhism",
+  "Hinduism",
+  "Christianity",
+  "Islam",
+  "Sikhism",
+  "Jainism",
+  "Bahá'í Faith"
+];
 
 export const residencyStatuses = ["Citizen", "Non-resident"];
 
